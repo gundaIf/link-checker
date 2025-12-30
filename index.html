@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Internal Links Extractor</title>
+    <style>
+        body { font-family: sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; background: #fff; color: #000; }
+        @media (prefers-color-scheme: dark) { body { background: #121212; color: #fff; } }
+        h1 { text-align: center; }
+        input, button { padding: 8px; margin: 5px 0; width: 100%; box-sizing: border-box; }
+        label { display: block; margin: 10px 0; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background: #f4f4f4; cursor: pointer; }
+        @media (prefers-color-scheme: dark) { th { background: #333; } td { border-color: #444; } }
+        #loading, #message { margin: 10px 0; color: #888; }
+        #loading { display: none; }
+        #exportCsv { display: none; width: auto; }
+        p { margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>Blog Internal Links Extractor</h1>
+    <p>Enter a blog post URL and click Extract Links. The CORS proxy is recommended to bypass restrictions on fetching content from other sites.</p>
+    <input type="url" id="urlInput" placeholder="https://example.com/blog/post">
+    <label><input type="checkbox" id="useProxy" checked> Use CORS proxy (recommended for most sites)</label>
+    <button id="extractBtn">Extract Links</button>
+    <div id="loading">Loading...</div>
+    <div id="message"></div>
+    <table id="resultsTable" style="display: none;">
+        <thead>
+            <tr>
+                <th onclick="sortTable(0)">Anchor Text</th>
+                <th onclick="sortTable(1)">Link URL</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <button id="exportCsv">Download as CSV</button>
+
+    <script>
+        const urlInput = document.getElementById('urlInput');
+        const useProxy = document.getElementById('useProxy');
+        const extractBtn = document.getElementById('extractBtn');
+        const loading = document.getElementById('loading');
+        const message = document.getElementById('message');
+        const resultsTable = document.getElementById('resultsTable');
+        const tableBody = resultsTable.querySelector('tbody');
+        const exportCsv = document.getElementById('exportCsv');
+
+        extractBtn.addEventListener('click', async () => {
+            const userURL = urlInput.value.trim();
+            if (!userURL) {
+                message.textContent = 'Please enter a valid URL.';
+                return;
+            }
+            message.textContent = '';
+            loading.style.display = 'block';
+            resultsTable.style.display = 'none';
+            exportCsv.style.display = 'none';
+            tableBody.innerHTML = '';
+
+            let fetchURL = userURL;
+            if (useProxy.checked) {
+                fetchURL = 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(userURL);
+            }
+
+            try {
+                const response = await fetch(fetchURL);
+                if (!response.ok) throw new Error('Fetch failed: ' + response.status);
+                const html = await response.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+
+                const selectors = ['article', 'main', '.post-content', '.entry-content', '.content', '[role="main"]', 'body'];
+                let mainContent = null;
+                for (let sel of selectors) {
+                    mainContent = doc.querySelector(sel);
+                    if (mainContent) break;
+                }
+                if (!mainContent) throw new Error('Could not find main content.');
+
+                const baseURL = new URL(userURL);
+                const inputHostname = baseURL.hostname;
+                const links = new Map();
+
+                const anchors = mainContent.querySelectorAll('a');
+                anchors.forEach(a => {
+                    let anchorText = (a.innerText || a.textContent).trim() || '[No text]';
+                    let href = a.getAttribute('href');
+                    if (!href || href.startsWith('javascript:') || href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('#')) return;
+
+                    let resolved;
+                    try {
+                        resolved = new URL(href, baseURL);
+                    } catch (e) { return; }
+
+                    if (resolved.hostname !== inputHostname) return;
+                    const excludes = ['twitter.com', 'facebook.com', 'linkedin.com', 'youtube.com', 'instagram.com', '/about', '/contact', '/privacy', '/terms'];
+                    if (excludes.some(ex => resolved.href.includes(ex))) return;
+
+                    const key = anchorText + '|' + resolved.href;
+                    if (!links.has(key)) links.set(key, { text: anchorText, url: resolved.href });
+                });
+
+                const sortedLinks = Array.from(links.values()).sort((a, b) => a.text.localeCompare(b.text));
+
+                sortedLinks.forEach(link => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `<td>${link.text}</td><td>${link.url}</td>`;
+                    tableBody.appendChild(row);
+                });
+
+                if (sortedLinks.length > 0) {
+                    resultsTable.style.display = 'table';
+                    exportCsv.style.display = 'block';
+
+                    // Duplicate analysis
+                    let urlToAnchors = new Map();
+                    sortedLinks.forEach(link => {
+                        if (!urlToAnchors.has(link.url)) urlToAnchors.set(link.url, []);
+                        urlToAnchors.get(link.url).push(link.text);
+                    });
+
+                    let dupSection = document.createElement('div');
+                    let dupTitle = document.createElement('h2');
+                    dupTitle.textContent = 'Duplicate Links Analysis';
+                    dupSection.appendChild(dupTitle);
+
+                    let totalLinks = sortedLinks.length;
+                    let uniqueURLs = urlToAnchors.size;
+                    let dupMsg = document.createElement('p');
+                    dupMsg.textContent = `Total unique anchor-URL pairs: ${totalLinks}. Unique URLs: ${uniqueURLs}. Duplicate occurrences: ${totalLinks - uniqueURLs}.`;
+                    dupSection.appendChild(dupMsg);
+
+                    let multiAnchors = [];
+                    urlToAnchors.forEach((anchors, url) => {
+                        if (anchors.length > 1) {
+                            multiAnchors.push({url, count: anchors.length, anchors: anchors.sort()});
+                        }
+                    });
+
+                    if (multiAnchors.length > 0) {
+                        let dupTable = document.createElement('table');
+                        let thead = document.createElement('thead');
+                        thead.innerHTML = '<tr><th>URL</th><th>Count</th><th>Anchors</th></tr>';
+                        dupTable.appendChild(thead);
+                        let tbody = document.createElement('tbody');
+                        multiAnchors.sort((a,b) => b.count - a.count).forEach(item => {
+                            let row = document.createElement('tr');
+                            row.innerHTML = `<td>${item.url}</td><td>${item.count}</td><td>${item.anchors.join(', ')}</td>`;
+                            if (item.count > 2) row.style.fontWeight = 'bold';
+                            tbody.appendChild(row);
+                        });
+                        dupTable.appendChild(tbody);
+                        dupSection.appendChild(dupTable);
+                    } else {
+                        let noDup = document.createElement('p');
+                        noDup.textContent = 'No duplicate URLs found.';
+                        dupSection.appendChild(noDup);
+                    }
+
+                    resultsTable.after(dupSection);
+                } else {
+                    message.textContent = 'No internal links found.';
+                }
+            } catch (error) {
+                message.textContent = 'Error: ' + error.message + '. Try toggling the proxy.';
+            } finally {
+                loading.style.display = 'none';
+            }
+        });
+
+        exportCsv.addEventListener('click', () => {
+            let csv = 'Anchor Text,Link URL\n';
+            tableBody.querySelectorAll('tr').forEach(row => {
+                const cells = row.querySelectorAll('td');
+                csv += `"${cells[0].textContent.replace(/"/g, '""')}",${cells[1].textContent}\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'internal-links.csv';
+            a.click();
+            URL.revokeObjectURL(url);
+        });
+
+        function sortTable(col) {
+            const rows = Array.from(tableBody.rows);
+            const asc = tableBody.dataset.sortDir !== 'asc';
+            tableBody.dataset.sortDir = asc ? 'asc' : 'desc';
+            rows.sort((a, b) => {
+                const valA = a.cells[col].textContent.trim();
+                const valB = b.cells[col].textContent.trim();
+                return asc ? valA.localeCompare(valB) : valB.localeCompare(valA);
+            });
+            rows.forEach(row => tableBody.appendChild(row));
+        }
+    </script>
+</body>
+</html>
