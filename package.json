@@ -1,0 +1,13 @@
+{
+  "name": "anchorage",
+  "version": "1.0.0",
+  "description": "Paste any URL and get every hyperlink on the page, sorted.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "node server.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
