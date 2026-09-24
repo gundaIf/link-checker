@@ -5,341 +5,241 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Anchorage</title>
 <meta name="description" content="Paste any URL and get every hyperlink on the page — where it points, where it sits, grouped and ready to export.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,650&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232530D9'/%3E%3Cpath d='M9 22h14' stroke='white' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M11 18l5-9 5 9' stroke='white' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23F5F1E9'/%3E%3Ctext x='16' y='23' font-family='Helvetica,Arial,sans-serif' font-size='22' text-anchor='middle' fill='%232A2722'%3E%E2%9C%B4%3C/text%3E%3C/svg%3E">
 <style>
   :root {
-    --bg: #EDECF2;
-    --surface: #FFFFFF;
-    --surface-2: #F6F5FA;
-    --ink: #16142B;
-    --ink-2: #4A4763;
-    --ink-3: #7C7995;
-    --line: #DAD8E4;
-    --line-2: #E8E7EF;
-    --accent: #2530D9;
-    --accent-hover: #1B24B8;
-    --accent-ink: #FFFFFF;
-    --c-internal: #2530D9;
-    --c-external: #6A2EA6;
-    --c-social: #0E7C86;
-    --c-file: #A8426F;
-    --c-contact: #5E6B12;
-    --c-anchor: #7C7995;
-    --ok: #1C7A4D;
-    --ok-soft: #DFF3E8;
-    --warn: #9A5A08;
-    --warn-soft: #FBEBD3;
-    --bad: #C0352C;
-    --bad-soft: #FBE1DE;
-    --shadow: 0 1px 0 rgba(22, 20, 43, .04), 0 12px 32px -18px rgba(22, 20, 43, .28);
-    --font-display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
-    --font-body: "IBM Plex Sans", "Helvetica Neue", Arial, system-ui, sans-serif;
-    --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    --paper: #F5F1E9;
+    --ink: #2A2722;
+    --ink-62: rgba(42, 39, 34, .62);
+    --ink-55: rgba(42, 39, 34, .55);
+    --ink-45: rgba(42, 39, 34, .45);
+    --ink-40: rgba(42, 39, 34, .4);
+    --rule: rgba(42, 39, 34, .22);
+    --rule-soft: rgba(42, 39, 34, .15);
+    --tint: rgba(42, 39, 34, .045);
+    --link: #0000EE;
+    --visited: #551A8B;
+    --terra: #B0673A;
+    --bad: #A23B2A;
+    --font: Helvetica, "Helvetica Neue", Arial, sans-serif;
     color-scheme: light;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      --bg: #0E0D18; --surface: #171628; --surface-2: #1D1C31;
-      --ink: #ECEAF7; --ink-2: #B3B0CB; --ink-3: #827F9C;
-      --line: #2C2A44; --line-2: #232137;
-      --accent: #8D95FF; --accent-hover: #A7AEFF; --accent-ink: #0E0D18;
-      --c-internal: #8D95FF; --c-external: #C39BF0; --c-social: #4FC6CF; --c-file: #EE8DB8; --c-contact: #B9C95A; --c-anchor: #827F9C;
-      --ok: #5CCB93; --ok-soft: #16301F; --warn: #E4A94F; --warn-soft: #33260F; --bad: #F2877F; --bad-soft: #3A1B19;
-      --shadow: 0 1px 0 rgba(0,0,0,.2), 0 16px 36px -20px rgba(0,0,0,.7);
-      color-scheme: dark;
-    }
-  }
-  :root[data-theme="dark"] {
-    --bg: #0E0D18; --surface: #171628; --surface-2: #1D1C31;
-    --ink: #ECEAF7; --ink-2: #B3B0CB; --ink-3: #827F9C;
-    --line: #2C2A44; --line-2: #232137;
-    --accent: #8D95FF; --accent-hover: #A7AEFF; --accent-ink: #0E0D18;
-    --c-internal: #8D95FF; --c-external: #C39BF0; --c-social: #4FC6CF; --c-file: #EE8DB8; --c-contact: #B9C95A; --c-anchor: #827F9C;
-    --ok: #5CCB93; --ok-soft: #16301F; --warn: #E4A94F; --warn-soft: #33260F; --bad: #F2877F; --bad-soft: #3A1B19;
-    --shadow: 0 1px 0 rgba(0,0,0,.2), 0 16px 36px -20px rgba(0,0,0,.7);
-    color-scheme: dark;
   }
 
   * { box-sizing: border-box; }
   html { -webkit-text-size-adjust: 100%; }
   body {
     margin: 0;
-    background: var(--bg);
+    background: var(--paper);
     color: var(--ink);
-    font: 15px/1.55 var(--font-body);
-    padding: 0 20px;
+    font: 15px/1.7 var(--font);
+    padding: 0 clamp(16px, 5.3vw, 36px);
     padding-top: env(safe-area-inset-top, 0px);
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
   [hidden] { display: none !important; }
-  a { color: var(--accent); }
+  a { color: var(--link); text-underline-offset: 2px; }
+  a:visited { color: var(--visited); }
   button, input, select, textarea { font: inherit; color: inherit; }
-  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+  :focus-visible { outline: 1px solid var(--ink); outline-offset: 3px; }
+  ::selection { background: rgba(176, 103, 58, .22); }
 
-  .wrap { max-width: 1180px; margin: 0 auto; }
+  .wrap { max-width: 728px; margin: 0 auto; }
+
+  /* Small uppercase type: brand, menu, labels, captions */
+  .lbl, .caption, .masthead, .label-row, .meta, .toolbar-2, .group-head, .st, .copy, .foot-row {
+    font-size: 11px; line-height: 1.55; letter-spacing: .09em; text-transform: uppercase;
+  }
+  .label-row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; color: var(--ink-55); margin: 0 0 8px; }
+  .caption { color: var(--ink-55); margin: 8px 0 0; }
+  .textlink {
+    background: none; border: 0; padding: 0; cursor: pointer;
+    color: var(--ink-55); text-transform: uppercase; letter-spacing: .09em; font-size: 11px;
+    text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px;
+  }
+  .textlink:hover { color: var(--ink); }
+  .textlink[disabled] { opacity: .5; cursor: default; }
+  .plus { color: var(--ink-40); margin-left: 3px; }
 
   /* ---------- Masthead ---------- */
   .masthead {
-    display: flex; align-items: center; justify-content: space-between; gap: 16px;
-    padding-block: 22px;
+    display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
+    padding-block: 40px 56px; font-size: 10px; letter-spacing: .1em;
   }
-  .brand { display: flex; align-items: center; gap: 10px; font: 650 19px/1 var(--font-display); letter-spacing: -.01em; color: var(--ink); text-decoration: none; }
-  .brand svg { width: 26px; height: 26px; }
-  .masthead nav { display: flex; gap: 18px; font-size: 14px; color: var(--ink-2); }
-  .masthead nav a { color: inherit; text-decoration: none; }
+  .brand { color: var(--ink); text-decoration: none; }
+  .brand:visited { color: var(--ink); }
+  .masthead nav { display: flex; gap: 20px; }
+  .masthead nav a, .masthead nav a:visited { color: var(--ink-62); text-decoration: none; }
   .masthead nav a:hover { color: var(--ink); }
 
-  /* ---------- Hero ---------- */
-  .hero { padding-block: 40px 28px; max-width: 820px; }
-  .hero h1 {
-    font: 650 clamp(2.3rem, 5.6vw, 4rem)/1.02 var(--font-display);
-    letter-spacing: -.035em;
-    margin: 0 0 18px;
-    text-wrap: balance;
-  }
-  .hero h1 .lnk {
-    color: var(--accent);
-    text-decoration: underline;
-    text-decoration-thickness: .075em;
-    text-underline-offset: .12em;
-  }
-  .hero p.lede { margin: 0 0 28px; max-width: 60ch; color: var(--ink-2); font-size: 17px; text-wrap: pretty; }
+  /* ---------- Intro ---------- */
+  h1, h2 { font-size: 22.5px; line-height: 1.3; font-weight: 600; letter-spacing: -.01em; margin: 0 0 14px; text-wrap: balance; }
+  h3 { font-size: 15px; font-weight: 700; margin: 0 0 4px; }
+  p { margin: 0 0 18px; }
+  .intro p { max-width: 62ch; }
 
-  .addr {
-    display: flex; align-items: stretch; gap: 8px;
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    padding: 7px;
-    box-shadow: var(--shadow);
-  }
-  .addr:focus-within { border-color: var(--accent); }
-  .addr .field { flex: 1; display: flex; align-items: center; gap: 10px; min-width: 0; padding-left: 12px; }
-  .addr .field svg { flex: none; width: 18px; height: 18px; color: var(--ink-3); }
+  .addr { display: flex; border: 1px solid var(--rule); background: transparent; }
+  .addr:focus-within { border-color: var(--ink-45); }
   .addr input {
     flex: 1; min-width: 0; border: 0; background: transparent; outline: none;
-    font: 400 16px/1.2 var(--font-mono); padding: 12px 0;
+    font-size: 15px; padding: 14px 16px;
   }
-  .addr input::placeholder { color: var(--ink-3); }
-  .btn {
-    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-    border: 1px solid transparent; border-radius: 9px; cursor: pointer;
-    padding: 9px 14px; font-weight: 500; font-size: 14px; white-space: nowrap;
-    transition: background-color .15s, border-color .15s, color .15s;
+  .addr input::placeholder { color: var(--ink-40); }
+  .go {
+    flex: none; border: 0; border-left: 1px solid var(--rule); background: transparent; cursor: pointer;
+    padding: 0 20px; font-size: 11px; letter-spacing: .09em; text-transform: uppercase; color: var(--ink);
+    transition: background-color .15s, color .15s;
   }
-  .btn svg { width: 16px; height: 16px; }
-  .btn-primary { background: var(--accent); color: var(--accent-ink); padding: 12px 20px; font-size: 15px; font-weight: 600; }
-  .btn-primary:hover { background: var(--accent-hover); }
-  .btn-primary[disabled] { opacity: .75; cursor: progress; }
-  .btn-quiet { background: var(--surface); border-color: var(--line); color: var(--ink); }
-  .btn-quiet:hover { border-color: var(--ink-3); }
-  .btn-quiet[disabled] { opacity: .55; cursor: default; }
-  .spinner { width: 16px; height: 16px; border-radius: 50%; border: 2px solid currentColor; border-right-color: transparent; animation: spin .7s linear infinite; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .hero-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; margin-top: 14px; font-size: 13.5px; color: var(--ink-3); }
-  .linkish { background: none; border: 0; padding: 0; color: var(--ink-2); text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 3px; cursor: pointer; }
-  .linkish:hover { color: var(--ink); text-decoration-color: currentColor; }
-  .progress { color: var(--ink-2); font-family: var(--font-mono); font-size: 13px; }
+  .go:hover { background: var(--ink); color: var(--paper); }
+  .go[disabled] { cursor: progress; background: var(--tint); color: var(--ink-55); }
   .progress:empty { display: none; }
 
-  .paste { margin-top: 14px; display: grid; gap: 10px; }
+  .paste { margin-top: 16px; }
   .paste textarea {
-    width: 100%; min-height: 150px; resize: vertical;
-    background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
-    padding: 12px 14px; font: 13px/1.5 var(--font-mono);
+    display: block; width: 100%; min-height: 150px; resize: vertical;
+    background: transparent; border: 1px solid var(--rule); border-radius: 0;
+    padding: 12px 16px; font: 13px/1.55 ui-monospace, Menlo, Consolas, monospace; color: var(--ink);
   }
-  .paste .row-actions { display: flex; gap: 8px 12px; flex-wrap: wrap; align-items: center; font-size: 13px; color: var(--ink-3); }
+  .paste textarea:focus { outline: none; border-color: var(--ink-45); }
+  .paste .row-actions { display: flex; flex-wrap: wrap; gap: 8px 20px; align-items: baseline; margin-top: 10px; }
+  .paste .row-actions span { color: var(--ink-55); font-size: 14px; }
 
-  .alert {
-    margin-top: 16px; padding: 12px 14px; border-radius: 10px;
-    background: var(--bad-soft); color: var(--bad); font-size: 14px; max-width: 70ch;
-  }
+  .alert { margin-top: 16px; padding: 12px 16px; border: 1px solid rgba(162, 59, 42, .35); color: var(--bad); font-size: 14px; }
 
   /* ---------- Report ---------- */
-  .report { padding-block: 20px 72px; }
-  .report-head { margin-bottom: 18px; }
-  .eyebrow { font-size: 12px; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; margin: 0 0 6px; display: flex; align-items: center; gap: 8px; }
-  .example-tag { letter-spacing: .06em; background: var(--warn-soft); color: var(--warn); padding: 2px 7px; border-radius: 5px; }
-  .report-head h2 { font: 650 clamp(1.4rem, 2.6vw, 1.9rem)/1.15 var(--font-display); letter-spacing: -.02em; margin: 0; text-wrap: balance; overflow-wrap: anywhere; }
-  .report-head .src { margin-top: 4px; font: 13px/1.4 var(--font-mono); color: var(--ink-3); overflow-wrap: anywhere; }
-  .report-head .src a { color: inherit; }
+  .report { padding-block: 56px 32px; }
+  .report-head { margin-bottom: 28px; }
+  .report-head h2 { margin-bottom: 4px; overflow-wrap: anywhere; }
+  .report-head .src { font-size: 14px; overflow-wrap: anywhere; }
+  .example-tag { color: var(--terra); }
 
-  .stats {
-    display: grid; grid-template-columns: repeat(6, minmax(0, 1fr));
-    background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
-    margin-bottom: 22px; overflow: hidden;
+  /* Floor plan grids: hairline cells, borders collapse via top/left on the grid */
+  .plan { display: grid; border-top: 1px solid var(--rule); border-left: 1px solid var(--rule); }
+  .plan > * { border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+
+  .stats { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-bottom: 40px; }
+  .stat { padding: 14px 15px 16px; display: flex; flex-direction: column; gap: 18px; }
+  .stat .lbl { color: var(--ink-55); }
+  .stat b { font-size: 22.5px; line-height: 1; font-weight: 600; letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
+
+  .rooms { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .room {
+    display: flex; flex-direction: column; justify-content: space-between; gap: 22px; min-height: 90px;
+    background: transparent; border-top: 0; border-left: 0; padding: 14px 15px 13px; text-align: left; cursor: pointer;
+    transition: background-color .15s;
   }
-  .stat { padding: 14px 16px; border-left: 1px solid var(--line-2); }
-  .stat:first-child { border-left: 0; }
-  .stat b { display: block; font: 650 26px/1.1 var(--font-display); letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
-  .stat span { font-size: 12.5px; color: var(--ink-3); }
+  .room.wide { grid-column: span 2; }
+  .room:hover { background: var(--tint); }
+  .room[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+  .room[aria-pressed="true"] .plus, .room[aria-pressed="true"] .n { color: rgba(245, 241, 233, .6); }
+  .room[disabled] { cursor: default; background: transparent; }
+  .room[disabled] .lbl, .room[disabled] .n { color: var(--ink-40); }
+  .room .n { font-size: 15px; color: var(--ink-62); font-variant-numeric: tabular-nums; }
+  .room.warn .lbl { color: var(--terra); }
+  .room.bad .lbl { color: var(--bad); }
+  .room[aria-pressed="true"].warn .lbl, .room[aria-pressed="true"].bad .lbl { color: var(--paper); }
 
-  .layout { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 24px; align-items: start; }
-
-  .rail { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); display: grid; gap: 2px; }
-  .rail h3 { font-size: 12px; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-3); margin: 14px 10px 6px; font-weight: 600; }
-  .rail h3:first-child { margin-top: 0; }
-  .chip {
-    display: flex; align-items: center; gap: 10px; width: 100%;
-    background: transparent; border: 0; border-radius: 8px; padding: 8px 10px;
-    text-align: left; cursor: pointer; color: var(--ink-2); font-size: 14px;
-  }
-  .chip:hover { background: var(--surface-2); color: var(--ink); }
-  .chip[aria-pressed="true"] { background: var(--surface); color: var(--ink); font-weight: 500; box-shadow: inset 0 0 0 1px var(--line); }
-  .chip[disabled] { opacity: .4; cursor: default; background: transparent; }
-  .chip .n { margin-left: auto; font: 12.5px var(--font-mono); color: var(--ink-3); font-variant-numeric: tabular-nums; }
-  .dot { flex: none; width: 9px; height: 9px; border-radius: 3px; background: var(--c, var(--ink-3)); }
-
-  .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; min-width: 0; }
-  .toolbar {
-    display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
-    padding: 12px; border-bottom: 1px solid var(--line);
-  }
-  .search { flex: 1 1 220px; display: flex; align-items: center; gap: 8px; background: var(--surface-2); border: 1px solid var(--line-2); border-radius: 9px; padding: 0 10px; }
-  .search:focus-within { border-color: var(--accent); }
-  .search svg { width: 16px; height: 16px; color: var(--ink-3); flex: none; }
-  .search input { flex: 1; min-width: 0; border: 0; background: transparent; outline: none; padding: 9px 0; font-size: 14px; }
-  .select { position: relative; }
+  .list { margin-top: 40px; }
+  .search { display: block; width: 100%; border: 0; border-bottom: 1px solid var(--rule); background: transparent; padding: 10px 0; font-size: 15px; outline: none; }
+  .search::placeholder { color: var(--ink-40); }
+  .search:focus { border-bottom-color: var(--ink-45); }
+  .toolbar-2 { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 18px; padding: 12px 0 0; color: var(--ink-55); }
+  .toolbar-2 .left { flex: 1 1 auto; display: flex; flex-wrap: wrap; gap: 8px 18px; }
+  .toolbar-2 .right { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: baseline; }
+  .toolbar-2 .sep { color: var(--ink-40); }
   .select select {
-    appearance: none; -webkit-appearance: none;
-    background: var(--surface); border: 1px solid var(--line); border-radius: 9px;
-    padding: 9px 30px 9px 12px; font-size: 14px; cursor: pointer;
+    appearance: none; -webkit-appearance: none; field-sizing: content; border: 0; background: transparent; cursor: pointer; padding: 0 14px 0 0;
+    font-size: 11px; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-62);
+    background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%);
+    background-position: right 4px center, right 0 center; background-size: 4px 4px; background-repeat: no-repeat;
   }
-  .select::after { content: ""; position: absolute; right: 12px; top: 50%; width: 6px; height: 6px; border-right: 1.5px solid var(--ink-3); border-bottom: 1.5px solid var(--ink-3); transform: translateY(-70%) rotate(45deg); pointer-events: none; }
-  .toolbar-2 { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 10px 12px; border-bottom: 1px solid var(--line); font-size: 13px; color: var(--ink-3); }
-  .toolbar-2 .left { flex: 1 1 auto; }
+  .select select:hover { color: var(--ink); }
 
-  .group + .group { border-top: 1px solid var(--line); }
-  .group-head { display: flex; align-items: center; gap: 10px; padding: 14px 16px 8px; }
-  .group-head h4 { margin: 0; font: 600 14.5px/1.3 var(--font-body); overflow-wrap: anywhere; }
-  .group-head .n { font: 12.5px var(--font-mono); color: var(--ink-3); font-weight: 400; }
-  .mono-badge {
-    flex: none; width: 22px; height: 22px; border-radius: 6px; display: grid; place-items: center;
-    font: 600 11.5px/1 var(--font-mono); text-transform: uppercase;
-    background: var(--surface-2); color: var(--ink-2); border: 1px solid var(--line-2);
-  }
+  .group { margin-top: 36px; }
+  .group-head { display: flex; align-items: baseline; gap: 6px; color: var(--ink-55); padding-bottom: 8px; border-bottom: 1px solid var(--rule); }
+  .group-head .name { color: var(--ink); }
+  .group-head .name.domain { text-transform: none; letter-spacing: .02em; font-size: 12px; }
+  .group-head .n { margin-left: auto; font-variant-numeric: tabular-nums; }
 
-  ul.rows { list-style: none; margin: 0; padding: 0 0 8px; }
-  .row {
-    display: grid; grid-template-columns: 9px minmax(0, 1fr) auto auto 34px; align-items: start; gap: 4px 14px;
-    padding: 10px 16px; border-top: 1px solid var(--line-2);
-  }
-  .row:first-child { border-top: 0; }
-  .row:hover { background: var(--surface-2); }
-  .row .dot { margin-top: 7px; }
-  .anchor { font-weight: 500; color: var(--ink); overflow-wrap: anywhere; }
-  .anchor .kind { font-weight: 400; color: var(--ink-3); font-size: 12.5px; margin-left: 6px; }
-  .anchor.none { color: var(--ink-3); font-style: italic; font-weight: 400; }
-  .url { display: block; margin-top: 2px; font: 13px/1.45 var(--font-mono); color: var(--ink-3); text-decoration: none; overflow-wrap: anywhere; }
-  .url .h { color: var(--ink-2); }
-  .url:hover, .url:hover .h { color: var(--accent); }
-  .final { margin-top: 3px; font: 12.5px/1.45 var(--font-mono); color: var(--warn); overflow-wrap: anywhere; }
-  .tags { display: flex; flex-wrap: wrap; gap: 4px; justify-content: flex-end; padding-top: 2px; max-width: 260px; }
-  .tag { font-size: 11.5px; line-height: 1; padding: 5px 7px; border-radius: 5px; background: var(--surface-2); color: var(--ink-2); border: 1px solid var(--line-2); white-space: nowrap; }
-  .tag.rel { color: var(--warn); background: var(--warn-soft); border-color: transparent; }
-  .status { padding-top: 2px; min-width: 0; }
-  .status:empty { display: none; }
-  .pill { display: inline-flex; align-items: center; gap: 6px; font: 500 12px/1 var(--font-mono); padding: 5px 8px; border-radius: 999px; white-space: nowrap; }
-  .pill::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
-  .pill.ok { color: var(--ok); background: var(--ok-soft); }
-  .pill.redirect { color: var(--warn); background: var(--warn-soft); }
-  .pill.broken, .pill.error { color: var(--bad); background: var(--bad-soft); }
-  .pill.pending { color: var(--ink-3); background: var(--surface-2); }
-  .pill.pending::before { animation: pulse 1s ease-in-out infinite; }
-  @keyframes pulse { 50% { opacity: .25; } }
-  .icon-btn {
-    grid-column: 5;
-    width: 32px; height: 32px; display: grid; place-items: center; border-radius: 8px;
-    border: 1px solid transparent; background: transparent; color: var(--ink-3); cursor: pointer;
-  }
-  .icon-btn:hover { background: var(--surface); border-color: var(--line); color: var(--ink); }
-  .icon-btn svg { width: 16px; height: 16px; }
-  .icon-btn.done { color: var(--ok); }
+  ul.rows { list-style: none; margin: 0; padding: 0; }
+  .group > ul.rows:first-child { border-top: 1px solid var(--rule); }
+  .row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 20px; padding: 14px 0 15px; border-bottom: 1px solid var(--rule-soft); }
+  .anchor { overflow-wrap: anywhere; }
+  .anchor .kind { color: var(--ink-45); font-size: 11px; letter-spacing: .09em; text-transform: uppercase; margin-left: 8px; }
+  .anchor.none { color: var(--ink-45); font-style: italic; }
+  .url { display: inline; font-size: 14px; overflow-wrap: anywhere; }
+  .final { font-size: 14px; color: var(--terra); overflow-wrap: anywhere; }
+  .meta { color: var(--ink-55); margin-top: 6px; }
+  .meta .rel { color: var(--terra); }
+  .side { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; padding-top: 3px; }
+  .st { color: var(--ink-55); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .st.moved { color: var(--terra); }
+  .st.bad { color: var(--bad); }
+  .st.pending { color: var(--ink-40); animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 50% { opacity: .35; } }
+  .copy { background: none; border: 0; padding: 0; cursor: pointer; color: var(--ink-45); }
+  .copy:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
 
-  .empty { padding: 48px 20px; text-align: center; color: var(--ink-3); }
+  .empty { padding: 40px 0; color: var(--ink-55); }
 
   .toast {
-    position: fixed; left: 50%; bottom: calc(env(safe-area-inset-bottom, 0px) + 24px); transform: translate(-50%, 12px);
-    background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 10px; font-size: 14px;
-    opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; z-index: 10;
+    position: fixed; left: 50%; bottom: calc(env(safe-area-inset-bottom, 0px) + 24px); transform: translate(-50%, 8px);
+    background: var(--ink); color: var(--paper); padding: 9px 14px;
+    font-size: 11px; letter-spacing: .09em; text-transform: uppercase;
+    opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; z-index: 10; white-space: nowrap;
   }
   .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
-  footer.site { border-top: 1px solid var(--line); padding-block: 28px 40px; color: var(--ink-3); font-size: 13.5px; }
-  footer.site .wrap { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
-  footer.site h5 { margin: 0 0 6px; color: var(--ink); font-size: 13.5px; font-weight: 600; }
-  footer.site p { margin: 0; max-width: 42ch; }
-  footer.site code { font: 12.5px var(--font-mono); }
+  footer.site { padding-block: 32px 48px; }
+  footer.site p { color: var(--ink-62); font-size: 14px; max-width: 62ch; }
+  footer.site code { font-size: 13px; }
+  .foot-row { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 16px; margin-top: 40px; color: var(--ink-55); font-size: 10px; letter-spacing: .1em; }
+  .foot-row a, .foot-row a:visited { color: var(--ink-55); text-decoration: none; }
+  .foot-row a:hover { color: var(--ink); }
+  .foot-row .dia { margin: 0 8px; color: var(--ink-40); }
 
-  @media (max-width: 960px) {
-    .stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-    .stat:nth-child(4) { border-left: 0; }
-    .stat:nth-child(n+4) { border-top: 1px solid var(--line-2); }
-    .layout { grid-template-columns: minmax(0, 1fr); }
-    .rail { position: static; display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
-    .rail h3 { display: none; }
-    .chip { width: auto; flex: none; border: 1px solid var(--line); background: var(--surface); }
-    .chip .n { margin-left: 2px; }
-  }
   @media (max-width: 640px) {
-    body { padding: 0 16px; }
-    .masthead nav { display: none; }
-    .hero { padding-block: 16px 20px; }
-    .addr { flex-direction: column; }
-    .addr .field { padding: 0 8px; }
+    .masthead { padding-block: 28px 40px; }
+    .masthead nav a.hide-sm { display: none; }
     .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .stat:nth-child(odd) { border-left: 0; }
-    .stat:nth-child(4) { border-left: 1px solid var(--line-2); }
-    .stat:nth-child(n+3) { border-top: 1px solid var(--line-2); }
-    .row { grid-template-columns: 9px minmax(0, 1fr) 34px; }
-    .row .tags, .row .status { grid-column: 2; justify-content: flex-start; max-width: none; }
-    .row .icon-btn { grid-column: 3; grid-row: 1; }
-    footer.site .wrap { grid-template-columns: minmax(0, 1fr); }
+    .rooms { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .room { min-height: 76px; }
+    .row { grid-template-columns: minmax(0, 1fr); }
+    .side { flex-direction: row; justify-content: space-between; align-items: baseline; padding-top: 4px; }
   }
   @media (prefers-reduced-motion: reduce) {
     *, *::before { animation: none !important; transition: none !important; }
   }
 </style>
 </head>
-<body>
+<body id="top">
   <div class="wrap">
     <header class="masthead">
-      <a class="brand" href="./" aria-label="Anchorage home">
-        <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="var(--accent)"/><path d="M9 22h14" stroke="var(--accent-ink)" stroke-width="3" stroke-linecap="round"/><path d="M11 18l5-9 5 9" stroke="var(--accent-ink)" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        Anchorage
-      </a>
+      <a class="brand" href="./">～のリンク ✴︎ Anchorage</a>
       <nav aria-label="Site">
-        <a href="#how">How it works</a>
-        <a href="#privacy">Privacy</a>
+        <a href="#how" class="hide-sm">How it works</a>
+        <a href="https://deeeen.xyz">Deeeen.xyz</a>
       </nav>
     </header>
 
-    <section class="hero">
-      <h1>Every link on the page, <span class="lnk">sorted</span>.</h1>
-      <p class="lede">Paste any URL — an article, a homepage, a docs page — and get every hyperlink on it: the anchor text, where it really goes, and which part of the page it sits in. Grouped, deduplicated, and ready to export.</p>
+    <section class="intro">
+      <h1>Every link on the page, sorted.</h1>
+      <p>Paste any URL — an article, a homepage, a docs page — and get every hyperlink on it: the anchor text, where it really goes, and which part of the page it sits in. Grouped, deduplicated, ready to export.</p>
 
-      <form class="addr" id="form" novalidate>
-        <label class="field" for="urlInput">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-          <input id="urlInput" type="url" inputmode="url" autocomplete="url" spellcheck="false" placeholder="https://example.com/blog/your-post" aria-label="Page URL">
-        </label>
-        <button class="btn btn-primary" id="goBtn" type="submit">Extract links</button>
-      </form>
-
-      <div class="hero-meta">
-        <span class="progress" id="progress" aria-live="polite"></span>
-        <button class="linkish" id="pasteToggle" type="button" aria-expanded="false" aria-controls="pastePanel">Site blocking us? Paste the page source instead</button>
+      <div class="label-row">
+        <span>Paste a URL</span>
+        <button class="textlink" id="pasteToggle" type="button" aria-expanded="false" aria-controls="pastePanel">Paste the source instead</button>
       </div>
+      <form class="addr" id="form" novalidate>
+        <input id="urlInput" type="url" inputmode="url" autocomplete="url" spellcheck="false" placeholder="https://example.com/blog/your-post" aria-label="Page URL">
+        <button class="go" id="goBtn" type="submit">Extract →</button>
+      </form>
+      <p class="caption progress" id="progress" aria-live="polite"></p>
 
       <div class="paste" id="pastePanel" hidden>
         <textarea id="pasteInput" placeholder="Open the page, press Ctrl/⌘ + U to view its source, select all, and paste it here." aria-label="Page HTML source"></textarea>
         <div class="row-actions">
-          <button class="btn btn-quiet" id="pasteBtn" type="button">Extract from source</button>
-          <span>Links are resolved against the URL in the box above.</span>
+          <button class="textlink" id="pasteBtn" type="button">Extract from source →</button>
+          <span>Links resolve against the URL above.</span>
         </div>
       </div>
 
@@ -349,68 +249,65 @@
 
   <main class="wrap report" id="report">
     <div class="report-head">
-      <p class="eyebrow"><span id="eyebrow">Report</span><span class="example-tag" id="exampleTag">Example</span></p>
+      <p class="label-row"><span><span id="eyebrow">Report</span> <span class="example-tag" id="exampleTag">✴︎ Example</span></span></p>
       <h2 id="pageTitle"></h2>
       <div class="src" id="pageSrc"></div>
     </div>
 
-    <div class="stats" id="stats"></div>
+    <div class="plan stats" id="stats"></div>
 
-    <div class="layout">
-      <aside class="rail" id="rail" aria-label="Filter links"></aside>
+    <div class="label-row">
+      <span>Floor plan</span>
+      <button class="textlink" type="button" data-filter="all" id="showAll">Show all</button>
+    </div>
+    <div id="rail" aria-label="Filter links"></div>
 
-      <section class="panel">
-        <div class="toolbar">
-          <label class="search" for="q">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-            <input id="q" type="search" placeholder="Filter by anchor text or URL" aria-label="Filter links">
-          </label>
-          <div class="select">
+    <section class="list">
+      <input class="search" id="q" type="search" placeholder="Filter by anchor text or URL" aria-label="Filter links">
+      <div class="toolbar-2">
+        <div class="left">
+          <span class="select">
             <select id="groupBy" aria-label="Group by">
-              <option value="category">Group: Type</option>
-              <option value="domain">Group: Domain</option>
-              <option value="location">Group: Page section</option>
+              <option value="category">Group by room</option>
+              <option value="domain">Group by domain</option>
+              <option value="location">Group by page section</option>
               <option value="none">No grouping</option>
             </select>
-          </div>
-          <div class="select">
+          </span>
+          <span class="select">
             <select id="sortBy" aria-label="Sort by">
-              <option value="page">Sort: Page order</option>
-              <option value="text">Sort: Anchor A–Z</option>
-              <option value="url">Sort: URL A–Z</option>
-              <option value="count">Sort: Most repeated</option>
+              <option value="page">Page order</option>
+              <option value="text">Anchor A–Z</option>
+              <option value="url">URL A–Z</option>
+              <option value="count">Most repeated</option>
             </select>
-          </div>
+          </span>
+          <span id="showing"></span>
         </div>
-        <div class="toolbar-2">
-          <span class="left" id="showing"></span>
-          <button class="btn btn-quiet" id="checkBtn" type="button">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-            <span>Check where links go</span>
-          </button>
-          <button class="btn btn-quiet" id="copyBtn" type="button">Copy URLs</button>
-          <button class="btn btn-quiet" id="csvBtn" type="button">CSV</button>
-          <button class="btn btn-quiet" id="jsonBtn" type="button">JSON</button>
+        <div class="right">
+          <button class="textlink" id="checkBtn" type="button"><span>Check where links go →</span></button>
+          <span class="sep">⦿</span>
+          <button class="textlink" id="copyBtn" type="button">Copy URLs</button>
+          <button class="textlink" id="csvBtn" type="button">CSV</button>
+          <button class="textlink" id="jsonBtn" type="button">JSON</button>
         </div>
-        <div id="groups"></div>
-      </section>
-    </div>
+      </div>
+      <div id="groups"></div>
+    </section>
   </main>
 
-  <footer class="site">
-    <div class="wrap">
-      <div id="how">
-        <h5>How it works</h5>
-        <p>We download the page, read every <code>&lt;a href&gt;</code>, resolve relative links, and sort them. “Check where links go” follows each link’s redirects and reports the final address and status.</p>
-      </div>
-      <div id="privacy">
-        <h5>Privacy</h5>
-        <p>No accounts and no tracking. The URL you enter is fetched by our server and not stored; the extracted results stay in your browser.</p>
-      </div>
-      <div>
-        <h5>Types</h5>
-        <p>Internal links stay on the same site (www. is ignored). Social, files &amp; media, email &amp; phone and same-page anchors are split out so the external list stays clean.</p>
-      </div>
+  <footer class="wrap site">
+    <div id="how">
+      <h3>✴︎ How it works</h3>
+      <p>We download the page, read every <code>&lt;a href&gt;</code>, resolve relative links, and sort them into rooms. “Check where links go” follows each link’s redirects and reports the final address and status.</p>
+    </div>
+    <div id="privacy">
+      <h3>✴︎ Privacy</h3>
+      <p>No accounts and no tracking. The URL you enter is fetched by our server and not stored; the extracted results stay in your browser.</p>
+    </div>
+    <div class="foot-row">
+      <span>Made from iterations. ✴︎</span>
+      <span><a href="#top" id="toTop">↑ Top</a><span class="dia">◊</span><a href="https://github.com/gundaIf/link-checker">GitHub</a><span class="dia">◊</span><a href="https://deeeen.xyz">Deeeen.xyz</a></span>
     </div>
   </footer>
 
@@ -428,12 +325,12 @@ const PROXIES = [
 ];
 
 const CATEGORIES = [
-  { id: 'internal', label: 'Internal', color: 'var(--c-internal)' },
-  { id: 'external', label: 'External', color: 'var(--c-external)' },
-  { id: 'social', label: 'Social', color: 'var(--c-social)' },
-  { id: 'file', label: 'Files & media', color: 'var(--c-file)' },
-  { id: 'contact', label: 'Email & phone', color: 'var(--c-contact)' },
-  { id: 'anchor', label: 'Same-page anchors', color: 'var(--c-anchor)' },
+  { id: 'internal', label: 'Internal' },
+  { id: 'external', label: 'External' },
+  { id: 'social', label: 'Social' },
+  { id: 'file', label: 'Files & media' },
+  { id: 'contact', label: 'Email & phone' },
+  { id: 'anchor', label: 'Same-page anchors' },
 ];
 const CAT = Object.fromEntries(CATEGORIES.map(c => [c.id, c]));
 const LOCATIONS = ['Navigation', 'Header', 'Content', 'Sidebar', 'Footer', 'Elsewhere'];
@@ -629,77 +526,81 @@ function renderStats() {
   const domains = new Set(r.links.filter(l => l.web && l.host !== r.host).map(l => l.host));
   const nofollow = r.links.filter(l => l.nofollow || l.sponsored || l.ugc).length;
   const items = [
-    [r.total, 'links on the page'],
-    [urls.size, 'unique destinations'],
-    [count(['internal']), 'internal'],
-    [count(['external', 'social']), 'external'],
-    [domains.size, 'other domains'],
-    [nofollow, 'nofollow / sponsored'],
+    [r.total, 'Links on the page'],
+    [urls.size, 'Unique destinations'],
+    [count(['internal']), 'Internal'],
+    [count(['external', 'social']), 'External'],
+    [domains.size, 'Other domains'],
+    [nofollow, 'Nofollow / sponsored'],
   ];
-  $('stats').innerHTML = items.map(([n, label]) => `<div class="stat"><b>${fmt(n)}</b><span>${label}</span></div>`).join('');
+  $('stats').innerHTML = items.map(([n, label]) => `<div class="stat"><span class="lbl">${label}</span><b>${fmt(n)}</b></div>`).join('');
 }
+
+const WORDS = ['No', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
 
 function renderRail() {
   const r = state.result;
   const n = pred => r.links.filter(pred).length;
-  const chip = (id, label, count, color) =>
-    `<button class="chip" type="button" data-filter="${id}" aria-pressed="${state.filter === id}" ${count ? '' : 'disabled'}>` +
-    (color ? `<span class="dot" style="--c:${color}"></span>` : '') + `${esc(label)}<span class="n">${fmt(count)}</span></button>`;
+  const room = (id, label, count, cls = '') =>
+    `<button class="room ${cls}" type="button" data-filter="${id}" aria-pressed="${state.filter === id}" ${count ? '' : 'disabled'}>` +
+    `<span class="lbl">${esc(label)}<span class="plus">+</span></span><span class="n">${fmt(count)}</span></button>`;
 
-  let html = '<h3>Type</h3>' + chip('all', 'All links', r.links.length, 'var(--ink)');
-  html += CATEGORIES.map(c => chip(c.id, c.label, n(l => l.category === c.id), c.color)).join('');
-  html += '<h3>Attributes</h3>' + chip('nofollow', 'nofollow / sponsored', n(l => l.nofollow || l.sponsored || l.ugc), 'var(--warn)');
+  const counts = CATEGORIES.map(c => n(l => l.category === c.id));
+  let html = CATEGORIES.map((c, i) => room(c.id, c.label, counts[i], c.id === 'internal' ? 'wide' : '')).join('');
+  html += room('nofollow', 'Nofollow / sponsored', n(l => l.nofollow || l.sponsored || l.ugc));
+  let broken = 0;
   if (state.status.size) {
     const s = states => n(l => states.includes(state.status.get(l.url)?.state));
-    html += '<h3>Destinations</h3>' + chip('status:broken', 'Broken', s(['broken', 'error']), 'var(--bad)') + chip('status:redirect', 'Redirects', s(['redirect']), 'var(--warn)');
+    broken = s(['broken', 'error']);
+    html += room('status:broken', 'Broken', broken, 'wide bad') + room('status:redirect', 'Redirects', s(['redirect']), 'wide warn');
   }
-  $('rail').innerHTML = html;
+  const rooms = counts.filter(Boolean).length;
+  let caption = `${WORDS[rooms] || rooms} room${rooms === 1 ? '' : 's'} ✴︎ ${fmt(r.links.length)} links`;
+  if (state.status.size && !state.checking) caption += broken ? ` ✴︎ ${fmt(broken)} need attention` : ' ✴︎ all reachable';
+  $('rail').innerHTML = `<div class="plan rooms">${html}</div><p class="caption">${caption}</p>`;
+  $('showAll').disabled = state.filter === 'all';
 }
 
 function statusPill(l) {
   const s = state.status.get(l.url);
   if (!s) return '';
-  if (s.state === 'pending') return '<span class="pill pending">checking</span>';
-  if (s.state === 'ok') return `<span class="pill ok">${s.code} OK</span>`;
-  if (s.state === 'redirect') return `<span class="pill redirect">${s.code >= 300 && s.code < 400 ? s.code : '3xx'} moved</span>`;
-  if (s.state === 'broken') return `<span class="pill broken">${s.code}</span>`;
-  return '<span class="pill error">no response</span>';
+  if (s.state === 'pending') return '<span class="st pending">Checking…</span>';
+  if (s.state === 'ok') return `<span class="st">${s.code} OK</span>`;
+  if (s.state === 'redirect') return `<span class="st moved">${s.code >= 300 && s.code < 400 ? s.code : '3xx'} → Moved</span>`;
+  if (s.state === 'broken') return `<span class="st bad">${s.code} Broken</span>`;
+  return '<span class="st bad">No response</span>';
 }
 
 function prettyUrl(l) {
   try {
     const u = new URL(l.url);
-    if (!l.web) return `<span class="h">${esc(decodeURIComponent(u.pathname))}</span>`;
+    if (!l.web) return esc(decodeURIComponent(u.pathname));
     const rest = u.pathname + u.search + u.hash;
-    return `<span class="h">${esc(u.hostname)}</span>${esc(rest === '/' ? '' : rest)}`;
+    return esc(u.hostname + (rest === '/' ? '' : rest));
   } catch (e) { return esc(l.url); }
 }
 
 function rowHtml(l) {
-  const cat = CAT[l.category];
-  const kindNote = { image: 'from image alt', label: 'from aria-label' }[l.kind];
-  const tags = [
-    `<span class="tag">${l.location}</span>`,
-    l.nofollow ? '<span class="tag rel">nofollow</span>' : '',
-    l.sponsored ? '<span class="tag rel">sponsored</span>' : '',
-    l.ugc ? '<span class="tag rel">ugc</span>' : '',
-    l.newTab ? '<span class="tag">new tab</span>' : '',
-    l.count > 1 ? `<span class="tag" title="Appears ${l.count} times with this anchor text">×${l.count}</span>` : '',
-  ].join('');
+  const kindNote = { image: 'Image alt', label: 'Aria-label' }[l.kind];
+  const meta = [
+    state.group !== 'category' ? CAT[l.category].label : '',
+    state.group !== 'location' ? l.location : '',
+    l.nofollow ? '<span class="rel">Nofollow</span>' : '',
+    l.sponsored ? '<span class="rel">Sponsored</span>' : '',
+    l.ugc ? '<span class="rel">UGC</span>' : '',
+    l.newTab ? 'New tab' : '',
+    l.count > 1 ? `<span title="Appears ${l.count} times with this anchor text">×${l.count}</span>` : '',
+  ].filter(Boolean).join(' ⦿ ');
   const s = state.status.get(l.url);
   const finalLine = s && s.state === 'redirect' && s.finalUrl ? `<div class="final">→ ${esc(s.finalUrl)}</div>` : '';
   return `<li class="row">
-    <span class="dot" style="--c:${cat.color}" title="${cat.label}"></span>
     <div>
       <div class="anchor${l.kind === 'none' ? ' none' : ''}">${esc(l.text)}${kindNote ? `<span class="kind">${kindNote}</span>` : ''}</div>
       <a class="url" href="${esc(l.url)}" target="_blank" rel="noopener noreferrer nofollow">${prettyUrl(l)}</a>
       ${finalLine}
+      ${meta ? `<div class="meta">${meta}</div>` : ''}
     </div>
-    <div class="tags">${tags}</div>
-    <div class="status">${statusPill(l)}</div>
-    <button class="icon-btn" type="button" data-copy="${esc(l.url)}" aria-label="Copy URL" title="Copy URL">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
-    </button>
+    <div class="side">${statusPill(l)}<button class="copy" type="button" data-copy="${esc(l.url)}" aria-label="Copy URL">Copy</button></div>
   </li>`;
 }
 
@@ -707,11 +608,11 @@ function renderGroups() {
   const r = state.result;
   const list = visibleLinks();
   $('showing').textContent = list.length === r.links.length
-    ? `${fmt(list.length)} distinct links`
-    : `Showing ${fmt(list.length)} of ${fmt(r.links.length)} distinct links`;
+    ? `${fmt(list.length)} links`
+    : `${fmt(list.length)} of ${fmt(r.links.length)} links`;
 
   if (!list.length) {
-    $('groups').innerHTML = `<div class="empty">${r.links.length ? 'No links match this filter.' : 'This page has no links we could read.'}</div>`;
+    $('groups').innerHTML = `<p class="empty">${r.links.length ? 'No links match this filter.' : 'This page has no links we could read.'}</p>`;
     return;
   }
 
@@ -735,11 +636,11 @@ function renderGroups() {
 
   $('groups').innerHTML = keys.map(k => {
     const items = groups.get(k);
-    let head = '';
-    if (state.group === 'category') head = `<span class="dot" style="--c:${CAT[k].color}"></span><h4>${CAT[k].label}</h4>`;
-    else if (state.group === 'domain') head = `<span class="mono-badge" aria-hidden="true">${esc(k.charAt(0))}</span><h4>${esc(k)}${k === r.host ? ' <span class="n">· this site</span>' : ''}</h4>`;
-    else if (state.group === 'location') head = `<h4>${esc(k)}</h4>`;
-    const header = state.group === 'none' ? '' : `<div class="group-head">${head}<span class="n">${fmt(items.length)}</span></div>`;
+    let name = '';
+    if (state.group === 'category') name = `<span class="name">${CAT[k].label}</span><span class="plus">+</span>`;
+    else if (state.group === 'domain') name = `<span class="name${k.includes('.') ? ' domain' : ''}">${esc(k)}</span>${k === r.host ? '<span>✴︎ This site</span>' : ''}`;
+    else if (state.group === 'location') name = `<span class="name">${esc(k)}</span><span class="plus">+</span>`;
+    const header = state.group === 'none' ? '' : `<div class="group-head">${name}<span class="n">${fmt(items.length)}</span></div>`;
     return `<div class="group">${header}<ul class="rows">${items.map(rowHtml).join('')}</ul></div>`;
   }).join('');
 }
@@ -780,7 +681,7 @@ function normalizeInput(value) {
 function setBusy(busy) {
   const btn = $('goBtn');
   btn.disabled = busy;
-  btn.innerHTML = busy ? '<span class="spinner" aria-hidden="true"></span>Reading page…' : 'Extract links';
+  btn.textContent = busy ? 'Reading…' : 'Extract →';
 }
 
 function load(result) {
@@ -829,7 +730,7 @@ function updateCheckBtn() {
   const btn = $('checkBtn');
   const label = btn.querySelector('span');
   if (state.checking) { label.textContent = `Stop checking (${state.checking.done}/${state.checking.total})`; return; }
-  label.textContent = state.status.size ? 'Check again' : 'Check where links go';
+  label.textContent = state.status.size ? 'Check again →' : 'Check where links go →';
   btn.disabled = !state.result || !state.result.links.some(l => l.web && l.category !== 'anchor');
 }
 
@@ -889,7 +790,11 @@ async function copyText(text, el) {
     try { document.execCommand('copy'); } catch (err) {}
     ta.remove();
   }
-  if (el) { el.classList.add('done'); setTimeout(() => el.classList.remove('done'), 1200); }
+  if (el) {
+    const label = el.textContent;
+    el.textContent = 'Copied';
+    setTimeout(() => { el.textContent = label; }, 1200);
+  }
 }
 
 function download(filename, text, type) {
@@ -941,18 +846,20 @@ $('pasteToggle').addEventListener('click', () => {
   if (open) $('pasteInput').focus();
 });
 
-$('rail').addEventListener('click', e => {
-  const chip = e.target.closest('[data-filter]');
-  if (!chip || chip.disabled) return;
-  state.filter = chip.dataset.filter;
+function onFilterClick(e) {
+  const room = e.target.closest('[data-filter]');
+  if (!room || room.disabled) return;
+  state.filter = state.filter === room.dataset.filter ? 'all' : room.dataset.filter;
   renderRail(); renderGroups();
-});
+}
+$('rail').addEventListener('click', onFilterClick);
+$('showAll').addEventListener('click', onFilterClick);
 $('q').addEventListener('input', e => { state.q = e.target.value; renderGroups(); });
 $('groupBy').addEventListener('change', e => { state.group = e.target.value; renderGroups(); });
 $('sortBy').addEventListener('change', e => { state.sort = e.target.value; renderGroups(); });
 $('groups').addEventListener('click', e => {
   const btn = e.target.closest('[data-copy]');
-  if (btn) { copyText(btn.dataset.copy, btn); toast('URL copied'); }
+  if (btn) copyText(btn.dataset.copy, btn);
 });
 
 $('checkBtn').addEventListener('click', checkDestinations);
