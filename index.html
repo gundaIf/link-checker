@@ -458,7 +458,7 @@ async function fetchWithTimeout(url, ms) {
 let apiAvailable = null;
 
 async function fetchPage(url) {
-  if (apiAvailable !== false) {
+  {
     setProgress('Fetching page…');
     let res = null;
     try { res = await fetchWithTimeout(API_BASE + '/api/fetch?url=' + encodeURIComponent(url), 30000); }
@@ -485,7 +485,10 @@ async function fetchPage(url) {
       return { html, finalUrl: url };
     } catch (e) { /* try the next proxy */ }
   }
-  throw new Error('We couldn’t load that page — the site may block us, or the address may be wrong. Try “Paste the page source instead” below.');
+  if (location.protocol === 'file:') {
+    throw new Error('This page was opened as a file, so it can’t fetch other websites. In the link-checker folder, run “node server.mjs”, then open http://localhost:8080.');
+  }
+  throw new Error('Anchorage’s link server isn’t reachable from this address, and the public backup proxies failed too. If you’re hosting only index.html, deploy server.mjs (or worker/proxy.js and set API_BASE). Meanwhile, “Paste the page source instead” works without a server.');
 }
 
 async function resolveLink(url) {
