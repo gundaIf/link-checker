@@ -1,5 +1,5 @@
 // Anchorage server: serves index.html and fetches pages on the browser's behalf.
-// No dependencies — Node 18+.
+// No dependencies. Node 18+.
 //
 //   GET /api/fetch?url=<page>     -> the page's HTML (final URL in X-Final-URL)
 //   GET /api/resolve?url=<link>   -> { status, finalStatus, finalUrl, hops: [{ url, status }] }

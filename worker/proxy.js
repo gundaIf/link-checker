@@ -1,4 +1,4 @@
-// Anchorage API as a Cloudflare Worker — the same /api routes as server.mjs, for when
+// Anchorage API as a Cloudflare Worker: the same /api routes as server.mjs, for when
 // index.html is hosted on a static host such as GitHub Pages.
 //
 //   GET /api/fetch?url=<page>     -> the page's HTML (final URL in the X-Final-URL header)
