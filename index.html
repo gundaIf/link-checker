@@ -417,9 +417,9 @@
   <div class="toast" id="toast" role="status"></div>
 
 <script>
-/* Where the fetch API lives. Empty means this site's own server (server.mjs).
-   If you host index.html on a static host, point this at a deployed worker/proxy.js. */
-const API_BASE = '';
+/* Where the fetch API lives. On GitHub Pages it's the Cloudflare Worker (worker/proxy.js);
+   anywhere else (e.g. `node server.mjs`) the page uses its own server. */
+const API_BASE = location.hostname.endsWith('github.io') ? 'https://anchorage-api.anchorage.workers.dev' : '';
 
 /* Used only when no API is reachable (e.g. index.html opened from a static host). */
 const PROXIES = [
