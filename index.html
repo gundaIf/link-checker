@@ -30,6 +30,10 @@
     --bad: #A23B2A;
     --ok: #2F6B3F;
     --on-ink: #F5F1E9;
+    --accent: #B0673A;
+    --switch-line: rgba(42, 39, 34, .35);
+    --switch-knob: rgba(42, 39, 34, .5);
+    --switch-knob-on: rgba(42, 39, 34, .9);
     --font: Helvetica, "Helvetica Neue", Arial, sans-serif;
     --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
     color-scheme: light;
@@ -39,6 +43,7 @@
       --paper: #1B1916; --surface: #221F1B; --tint: rgba(236, 230, 218, .06);
       --ink: #ECE6DA; --ink-2: #B8B3A9; --ink-3: #ADA89F; --control: #848078; --hairline: rgba(236, 230, 218, .16);
       --link: #9DB1FF; --visited: #C8A8F0; --moved: #E09A6B; --bad: #F0907A; --ok: #7FC08F; --on-ink: #1B1916;
+      --accent: #E09A6B; --switch-line: rgba(236, 230, 218, .35); --switch-knob: rgba(236, 230, 218, .5); --switch-knob-on: rgba(236, 230, 218, .9);
       color-scheme: dark;
     }
   }
@@ -46,6 +51,7 @@
     --paper: #1B1916; --surface: #221F1B; --tint: rgba(236, 230, 218, .06);
     --ink: #ECE6DA; --ink-2: #B8B3A9; --ink-3: #ADA89F; --control: #848078; --hairline: rgba(236, 230, 218, .16);
     --link: #9DB1FF; --visited: #C8A8F0; --moved: #E09A6B; --bad: #F0907A; --ok: #7FC08F; --on-ink: #1B1916;
+      --accent: #E09A6B; --switch-line: rgba(236, 230, 218, .35); --switch-knob: rgba(236, 230, 218, .5); --switch-knob-on: rgba(236, 230, 218, .9);
     color-scheme: dark;
   }
 
@@ -97,17 +103,19 @@
   .brand { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-size: 17px; color: var(--ink); text-decoration: none; }
   .brand:visited { color: var(--ink); }
   .brand .mark { font-size: 20px; line-height: 1; }
-  .masthead nav { display: flex; align-items: center; gap: 4px; }
-  .masthead nav .text-link { color: var(--ink-2); font-size: 15px; margin-right: 12px; }
-  .icon-link { display: grid; place-items: center; width: 40px; height: 40px; color: var(--ink); }
-  .icon-link:visited { color: var(--ink); }
-  .icon-link svg { width: 20px; height: 20px; }
-  .icon-link:hover { background: var(--tint); }
-  .theme-toggle { display: grid; place-items: center; width: 52px; height: 40px; padding: 0; background: none; border: 0; cursor: pointer; }
-  .theme-toggle .track { position: relative; width: 38px; height: 22px; border: 1px solid var(--control); border-radius: 11px; }
-  .theme-toggle .knob { position: absolute; top: 3px; left: 3px; width: 14px; height: 14px; border-radius: 50%; background: var(--ink-2); transition: transform .18s ease; }
-  .theme-toggle[aria-checked="true"] .knob { transform: translateX(16px); background: var(--ink); }
-  .theme-toggle:hover .track { border-color: var(--ink); }
+  /* Header controls: same geometry as the deeeen.xyz subdomains (home 1.75em box with a
+     14px 1.25-stroke icon; 1.75em x 0.875em switch). Invisible ::after pads the tap area. */
+  .masthead nav { display: flex; align-items: center; gap: 14px; font-size: 15px; }
+  .home-btn, .theme-toggle { position: relative; }
+  .home-btn::after, .theme-toggle::after { content: ""; position: absolute; inset: -9px; }
+  .home-btn { display: inline-flex; align-items: center; justify-content: center; width: 1.75em; height: 1.75em; color: var(--ink); }
+  .home-btn:visited { color: var(--ink); }
+  .home-btn:hover { color: var(--accent); }
+  .home-btn svg { display: block; width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 1.25; stroke-linejoin: round; stroke-linecap: round; }
+  .theme-toggle { display: inline-flex; align-items: center; background: none; border: 0; padding: 0; cursor: pointer; font-size: 10px; }
+  .theme-toggle .track { position: relative; width: 1.75em; height: .875em; border: 1px solid var(--switch-line); border-radius: 999px; }
+  .theme-toggle .knob { position: absolute; top: 50%; left: .125em; width: .5em; height: .5em; border-radius: 50%; background: var(--switch-knob); transform: translateY(-50%); transition: left .2s; }
+  .theme-toggle[aria-checked="true"] .knob { left: calc(100% - .625em); background: var(--switch-knob-on); }
 
   /* Extraction loader: a thin line that resolves out of scrambled characters */
   .loader { position: relative; height: 14px; margin-top: 10px; overflow: hidden; opacity: 0; transition: opacity .15s; }
@@ -254,8 +262,7 @@
     .toolbar .row-2 .showing { flex-basis: 100%; }
   }
   @media (max-width: 640px) {
-    .masthead nav .text-link { display: none; }
-    .intro { padding-top: 12px; }
+      .intro { padding-top: 12px; }
     .addr { flex-direction: column; }
     .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .stat:nth-child(odd) { border-left: 0; }
@@ -278,9 +285,8 @@
     <header class="masthead">
       <a class="brand" href="./"><span class="mark" aria-hidden="true">✴︎</span>Anchorage</a>
       <nav aria-label="Site">
-        <a class="text-link" href="#how">How it works</a>
-        <a class="icon-link" href="https://deeeen.xyz/about" aria-label="Home (deeeen.xyz)" title="Home">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M4 10.5 12 4l8 6.5"/><path d="M6 9v11h12V9"/><path d="M10 20v-5h4v5"/></svg>
+        <a class="home-btn" href="https://deeeen.xyz/about" aria-label="Home, deeeen.xyz" title="Home">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.2 8.1 L8 2.8 L13.8 8.1"/><path d="M4 7.4 V13.2 H12 V7.4"/></svg>
         </a>
         <button class="theme-toggle" id="themeToggle" type="button" role="switch" aria-checked="false" aria-label="Dark mode" title="Dark mode"><span class="track" aria-hidden="true"><span class="knob"></span></span></button>
       </nav>
