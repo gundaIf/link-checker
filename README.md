@@ -2,9 +2,9 @@
 
 Paste any URL and get every hyperlink on the page: anchor text, destination, page section (nav, content, sidebar, footer), rel attributes, and where each link really goes after redirects. Links are grouped by type (internal, external, social, files, email & phone, same-page anchors), domain, or page section, and export to CSV or JSON.
 
-- `index.html` — the whole front end, no build step
-- `server.mjs` — serves the page plus `/api/fetch` and `/api/resolve` (Node 18+, no dependencies)
-- `worker/proxy.js` — the same API as a Cloudflare Worker, for static hosting
+- `index.html`: the whole front end, no build step
+- `server.mjs`: serves the page plus `/api/fetch` and `/api/resolve` (Node 18+, no dependencies)
+- `worker/proxy.js`: the same API as a Cloudflare Worker, for static hosting
 
 ## Run locally
 

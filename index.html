@@ -4,8 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Anchorage</title>
-<meta name="description" content="Paste any URL and get every hyperlink on the page — where it points, where it sits, grouped and ready to export.">
+<meta name="description" content="Paste any URL and get every hyperlink on the page: where it points, where it sits, grouped and ready to export.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%232A2722'/%3E%3Ctext x='16' y='23' font-family='Helvetica,Arial,sans-serif' font-size='22' text-anchor='middle' fill='%23F5F1E9'%3E%E2%9C%B4%3C/text%3E%3C/svg%3E">
+<script>
+  try {
+    const saved = localStorage.getItem('anchorage-theme');
+    if (saved === 'dark' || saved === 'light') document.documentElement.setAttribute('data-theme', saved);
+  } catch (e) {}
+</script>
 <style>
   /* Palette: warm paper and ink. Every text colour meets WCAG AA (4.5:1) on its ground;
      control borders meet 3:1. Hairlines are decorative only. */
@@ -91,7 +97,28 @@
   .brand { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-size: 17px; color: var(--ink); text-decoration: none; }
   .brand:visited { color: var(--ink); }
   .brand .mark { font-size: 20px; line-height: 1; }
-  .masthead nav a { color: var(--ink-2); font-size: 15px; }
+  .masthead nav { display: flex; align-items: center; gap: 4px; }
+  .masthead nav .text-link { color: var(--ink-2); font-size: 15px; margin-right: 12px; }
+  .icon-link { display: grid; place-items: center; width: 40px; height: 40px; color: var(--ink); }
+  .icon-link:visited { color: var(--ink); }
+  .icon-link svg { width: 20px; height: 20px; }
+  .icon-link:hover { background: var(--tint); }
+  .theme-toggle { display: grid; place-items: center; width: 52px; height: 40px; padding: 0; background: none; border: 0; cursor: pointer; }
+  .theme-toggle .track { position: relative; width: 38px; height: 22px; border: 1px solid var(--control); border-radius: 11px; }
+  .theme-toggle .knob { position: absolute; top: 3px; left: 3px; width: 14px; height: 14px; border-radius: 50%; background: var(--ink-2); transition: transform .18s ease; }
+  .theme-toggle[aria-checked="true"] .knob { transform: translateX(16px); background: var(--ink); }
+  .theme-toggle:hover .track { border-color: var(--ink); }
+
+  /* Extraction loader: a thin line that resolves out of scrambled characters */
+  .loader { position: relative; height: 14px; margin-top: 10px; overflow: hidden; opacity: 0; transition: opacity .15s; }
+  .loader.active { opacity: 1; }
+  .loader .line { position: absolute; left: 0; top: 50%; height: 1px; width: 0; background: var(--ink); }
+  .loader .glyphs {
+    position: absolute; inset: 0; white-space: pre; overflow: hidden;
+    font: 11px/14px var(--mono); color: var(--ink-3);
+    -webkit-mask-image: linear-gradient(to right, #000 55%, transparent); mask-image: linear-gradient(to right, #000 55%, transparent);
+  }
+  .loader .head { color: var(--ink); }
 
   /* ---------- Intro + URL form ---------- */
   .intro { padding-block: 32px 8px; max-width: 760px; }
@@ -105,7 +132,7 @@
   }
   .addr input:focus { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
   .addr input::placeholder { color: var(--ink-3); }
-  .hint { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; margin: 10px 0 0; color: var(--ink-2); font-size: 15px; }
+  .hint { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; margin: 4px 0 0; color: var(--ink-2); font-size: 15px; }
   .status-line { margin: 12px 0 0; font-size: 15px; color: var(--ink-2); }
   .status-line:empty { display: none; }
 
@@ -227,7 +254,7 @@
     .toolbar .row-2 .showing { flex-basis: 100%; }
   }
   @media (max-width: 640px) {
-    .masthead nav { display: none; }
+    .masthead nav .text-link { display: none; }
     .intro { padding-top: 12px; }
     .addr { flex-direction: column; }
     .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -250,12 +277,18 @@
   <div class="wrap">
     <header class="masthead">
       <a class="brand" href="./"><span class="mark" aria-hidden="true">✴︎</span>Anchorage</a>
-      <nav aria-label="Site"><a href="#how">How it works</a></nav>
+      <nav aria-label="Site">
+        <a class="text-link" href="#how">How it works</a>
+        <a class="icon-link" href="https://deeeen.xyz/about" aria-label="Home (deeeen.xyz)" title="Home">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M4 10.5 12 4l8 6.5"/><path d="M6 9v11h12V9"/><path d="M10 20v-5h4v5"/></svg>
+        </a>
+        <button class="theme-toggle" id="themeToggle" type="button" role="switch" aria-checked="false" aria-label="Dark mode" title="Dark mode"><span class="track" aria-hidden="true"><span class="knob"></span></span></button>
+      </nav>
     </header>
 
     <section class="intro" aria-labelledby="intro-title">
       <h1 id="intro-title">Every link on the page, sorted.</h1>
-      <p class="lede">Paste any URL — an article, a homepage, a docs page — and get every hyperlink on it: the anchor text, where it really goes, and which part of the page it sits in. Grouped, deduplicated, ready to export.</p>
+      <p class="lede">Paste any URL (an article, a homepage, a docs page) and get every hyperlink on it: the anchor text, where it really goes, and which part of the page it sits in. Grouped, deduplicated, ready to export.</p>
 
       <form id="form" novalidate>
         <label class="field-label" for="urlInput">Page URL</label>
@@ -263,6 +296,7 @@
           <input id="urlInput" type="url" inputmode="url" autocomplete="url" spellcheck="false" placeholder="https://example.com/blog/your-post" aria-describedby="urlHint">
           <button class="btn btn-primary" id="goBtn" type="submit">Extract links</button>
         </div>
+        <div class="loader" id="loader" aria-hidden="true"><span class="line"></span><span class="glyphs"><span class="pad"></span><span class="head"></span><span class="tail"></span></span></div>
       </form>
       <p class="hint" id="urlHint">
         <span>Some sites block automated visits.</span>
@@ -704,6 +738,75 @@ function scheduleRender() {
 
 /* ---------- Actions ---------- */
 
+/* Loading line: scrambled characters give way to a solid hairline as the fetch runs.
+   It eases toward 86% while waiting, then completes quickly once the page arrives. */
+const loader = (() => {
+  const el = $('loader');
+  const line = el.querySelector('.line');
+  const [pad, head, tail] = el.querySelectorAll('.glyphs > span');
+  const CHARS = '0123456789abcdef:/.#?=&%';
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+  let timer = null, progress = 0, finishing = false, cols = 0;
+
+  const rand = n => Array.from({ length: n }, () => CHARS[Math.floor(Math.random() * CHARS.length)]).join('');
+
+  function measure() {
+    tail.textContent = '0'.repeat(40);
+    const charWidth = tail.getBoundingClientRect().width / 40 || 6.6;
+    cols = Math.max(0, Math.floor(el.clientWidth / charWidth));
+  }
+
+  function frame() {
+    progress = finishing ? Math.min(1, progress + .2) : progress + (.86 - progress) * .035;
+    line.style.width = (progress * 100).toFixed(1) + '%';
+    const locked = Math.floor(progress * cols);
+    if (reduced.matches || locked >= cols) {
+      pad.textContent = head.textContent = tail.textContent = '';
+    } else {
+      pad.textContent = '\u00a0'.repeat(locked);
+      head.textContent = rand(1);
+      tail.textContent = rand(cols - locked - 1);
+    }
+    if (finishing && progress >= 1) {
+      clearInterval(timer); timer = null;
+      setTimeout(() => el.classList.remove('active'), 160);
+    }
+  }
+
+  return {
+    start() {
+      clearInterval(timer);
+      progress = 0; finishing = false;
+      measure();
+      el.classList.add('active');
+      timer = setInterval(frame, 40);
+      frame();
+    },
+    finish() { finishing = true; },
+    cancel() {
+      clearInterval(timer); timer = null;
+      el.classList.remove('active');
+      line.style.width = '0';
+    },
+  };
+})();
+
+const themeToggle = $('themeToggle');
+const systemDark = matchMedia('(prefers-color-scheme: dark)');
+const isDark = () => {
+  const theme = document.documentElement.getAttribute('data-theme');
+  return theme ? theme === 'dark' : systemDark.matches;
+};
+const syncThemeToggle = () => themeToggle.setAttribute('aria-checked', String(isDark()));
+themeToggle.addEventListener('click', () => {
+  const next = isDark() ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  try { localStorage.setItem('anchorage-theme', next); } catch (e) {}
+  syncThemeToggle();
+});
+systemDark.addEventListener('change', syncThemeToggle);
+syncThemeToggle();
+
 function setProgress(text) { $('progress').textContent = text; }
 function showError(msg) { $('alert').textContent = msg; $('alert').hidden = !msg; }
 
@@ -742,13 +845,16 @@ async function runUrl() {
   if (!url) { showError('Enter a full web address, like https://example.com/blog/post.'); $('urlInput').focus(); return; }
   $('urlInput').value = url;
   setBusy(true);
+  loader.start();
   const started = performance.now();
   try {
     const { html, finalUrl } = await fetchPage(url);
+    loader.finish();
     const result = extract(html, finalUrl);
     load(result);
     setProgress(`Found ${fmt(result.total)} links in ${((performance.now() - started) / 1000).toFixed(1)}s`);
   } catch (e) {
+    loader.cancel();
     setProgress('');
     showError(e.name === 'AbortError' ? 'The page took too long to respond. Try again, or paste its source instead.' : e.message);
   } finally {
@@ -829,7 +935,7 @@ async function checkDestinations() {
   state.checking = null;
   updateCheckBtn();
   const broken = [...state.status.values()].filter(s => s.state === 'broken' || s.state === 'error').length;
-  toast(broken ? `Checked ${fmt(job.total)} links — ${fmt(broken)} ${broken === 1 ? 'needs' : 'need'} attention` : `Checked ${fmt(job.total)} links — all reachable`);
+  toast(broken ? `Checked ${fmt(job.total)} links. ${fmt(broken)} ${broken === 1 ? 'needs' : 'need'} attention.` : `Checked ${fmt(job.total)} links. All reachable.`);
 }
 
 async function copyText(text, el) {
@@ -946,9 +1052,9 @@ const SAMPLE_HTML = `<!doctype html><html><head><title>How we cut our page load 
 <p>Our first step was measuring. We leaned on <a href="https://web.dev/articles/vitals" target="_blank">Core Web Vitals</a> and the
 <a href="https://developer.mozilla.org/en-US/docs/Web/Performance">MDN performance guide</a>, then profiled with
 <a href="https://developer.chrome.com/docs/lighthouse/overview/">Lighthouse</a>.</p>
-<p>Images were the biggest win — see our <a href="/blog/image-formats-compared">image formats comparison</a> and the
+<p>Images were the biggest win. See our <a href="/blog/image-formats-compared">image formats comparison</a> and the
 <a href="/guides/responsive-images">responsive images guide</a>. Fonts came next (<a href="/blog/self-hosting-fonts">why we self-host fonts</a>).</p>
-<p>We also swapped our CDN — <a href="https://www.cloudflare.com/learning/cdn/what-is-a-cdn/" rel="nofollow">what a CDN does</a> — and tried
+<p>We also swapped our CDN (<a href="https://www.cloudflare.com/learning/cdn/what-is-a-cdn/" rel="nofollow">what a CDN does</a>) and tried
 <a href="https://partner.example-hosting.io/?ref=northwind" rel="sponsored nofollow">our hosting partner</a>. Old notes live at
 <a href="http://blog.northwind-legacy.com/2019/speed">our 2019 speed post</a>.</p>
 <p>Download the <a href="/files/performance-checklist.pdf">performance checklist (PDF)</a>, jump to <a href="#results">the results</a>, or
