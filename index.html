@@ -5,24 +5,42 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Anchorage</title>
 <meta name="description" content="Paste any URL and get every hyperlink on the page — where it points, where it sits, grouped and ready to export.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23F5F1E9'/%3E%3Ctext x='16' y='23' font-family='Helvetica,Arial,sans-serif' font-size='22' text-anchor='middle' fill='%232A2722'%3E%E2%9C%B4%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%232A2722'/%3E%3Ctext x='16' y='23' font-family='Helvetica,Arial,sans-serif' font-size='22' text-anchor='middle' fill='%23F5F1E9'%3E%E2%9C%B4%3C/text%3E%3C/svg%3E">
 <style>
+  /* Palette: warm paper and ink. Every text colour meets WCAG AA (4.5:1) on its ground;
+     control borders meet 3:1. Hairlines are decorative only. */
   :root {
     --paper: #F5F1E9;
+    --surface: #FBF9F5;
+    --tint: rgba(42, 39, 34, .05);
     --ink: #2A2722;
-    --ink-62: rgba(42, 39, 34, .62);
-    --ink-55: rgba(42, 39, 34, .55);
-    --ink-45: rgba(42, 39, 34, .45);
-    --ink-40: rgba(42, 39, 34, .4);
-    --rule: rgba(42, 39, 34, .22);
-    --rule-soft: rgba(42, 39, 34, .15);
-    --tint: rgba(42, 39, 34, .045);
+    --ink-2: #5D5A54;
+    --ink-3: #67645E;
+    --control: #8A867F;
+    --hairline: rgba(42, 39, 34, .18);
     --link: #0000EE;
     --visited: #551A8B;
-    --terra: #B0673A;
+    --moved: #9A5530;
     --bad: #A23B2A;
+    --ok: #2F6B3F;
+    --on-ink: #F5F1E9;
     --font: Helvetica, "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
     color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #1B1916; --surface: #221F1B; --tint: rgba(236, 230, 218, .06);
+      --ink: #ECE6DA; --ink-2: #B8B3A9; --ink-3: #ADA89F; --control: #848078; --hairline: rgba(236, 230, 218, .16);
+      --link: #9DB1FF; --visited: #C8A8F0; --moved: #E09A6B; --bad: #F0907A; --ok: #7FC08F; --on-ink: #1B1916;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #1B1916; --surface: #221F1B; --tint: rgba(236, 230, 218, .06);
+    --ink: #ECE6DA; --ink-2: #B8B3A9; --ink-3: #ADA89F; --control: #848078; --hairline: rgba(236, 230, 218, .16);
+    --link: #9DB1FF; --visited: #C8A8F0; --moved: #E09A6B; --bad: #F0907A; --ok: #7FC08F; --on-ink: #1B1916;
+    color-scheme: dark;
   }
 
   * { box-sizing: border-box; }
@@ -31,8 +49,8 @@
     margin: 0;
     background: var(--paper);
     color: var(--ink);
-    font: 15px/1.7 var(--font);
-    padding: 0 clamp(16px, 5.3vw, 36px);
+    font: 16px/1.6 var(--font);
+    padding: 0 clamp(16px, 4vw, 32px);
     padding-top: env(safe-area-inset-top, 0px);
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
@@ -40,206 +58,224 @@
   a { color: var(--link); text-underline-offset: 2px; }
   a:visited { color: var(--visited); }
   button, input, select, textarea { font: inherit; color: inherit; }
-  :focus-visible { outline: 1px solid var(--ink); outline-offset: 3px; }
-  ::selection { background: rgba(176, 103, 58, .22); }
+  :focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
+  ::selection { background: rgba(176, 103, 58, .25); }
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+  .skip { position: absolute; left: 16px; top: -60px; background: var(--ink); color: var(--on-ink); padding: 10px 14px; z-index: 20; }
+  .skip:focus { top: calc(env(safe-area-inset-top, 0px) + 12px); }
+  .skip:visited { color: var(--on-ink); }
 
-  .wrap { max-width: 728px; margin: 0 auto; }
+  .wrap { max-width: 1120px; margin: 0 auto; }
+  .eyebrow { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); margin: 0 0 8px; }
+  h1 { font-size: clamp(26px, 4vw, 34px); line-height: 1.2; font-weight: 600; letter-spacing: -.015em; margin: 0 0 14px; text-wrap: balance; }
+  h2 { font-size: 22px; line-height: 1.3; font-weight: 600; letter-spacing: -.01em; margin: 0; text-wrap: balance; overflow-wrap: anywhere; }
+  p { margin: 0 0 16px; }
 
-  /* Small uppercase type: brand, menu, labels, captions */
-  .lbl, .caption, .masthead, .label-row, .meta, .toolbar-2, .group-head, .st, .copy, .foot-row {
-    font-size: 11px; line-height: 1.55; letter-spacing: .09em; text-transform: uppercase;
+  /* ---------- Buttons ---------- */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    min-height: 40px; padding: 8px 14px; cursor: pointer;
+    border: 1px solid var(--control); background: var(--surface); color: var(--ink);
+    font-size: 14px; line-height: 1.2; white-space: nowrap;
+    transition: background-color .15s, border-color .15s;
   }
-  .label-row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; color: var(--ink-55); margin: 0 0 8px; }
-  .caption { color: var(--ink-55); margin: 8px 0 0; }
-  .textlink {
-    background: none; border: 0; padding: 0; cursor: pointer;
-    color: var(--ink-55); text-transform: uppercase; letter-spacing: .09em; font-size: 11px;
-    text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px;
-  }
-  .textlink:hover { color: var(--ink); }
-  .textlink[disabled] { opacity: .5; cursor: default; }
-  .plus { color: var(--ink-40); margin-left: 3px; }
+  .btn:hover { border-color: var(--ink); background: var(--tint); }
+  .btn[disabled] { cursor: default; color: var(--ink-3); border-color: var(--hairline); background: transparent; }
+  .btn-primary { background: var(--ink); color: var(--on-ink); border-color: var(--ink); font-weight: 600; min-height: 50px; padding: 12px 22px; font-size: 15px; }
+  .btn-primary:hover { background: var(--ink-2); border-color: var(--ink-2); }
+  .btn-primary[disabled] { background: var(--ink-2); border-color: var(--ink-2); color: var(--on-ink); cursor: progress; }
+  .linkbtn { background: none; border: 0; padding: 4px 0; cursor: pointer; color: var(--link); text-decoration: underline; text-underline-offset: 2px; font-size: 15px; }
 
   /* ---------- Masthead ---------- */
-  .masthead {
-    display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
-    padding-block: 40px 56px; font-size: 10px; letter-spacing: .1em;
-  }
-  .brand { color: var(--ink); text-decoration: none; }
+  .masthead { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 24px; }
+  .brand { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-size: 17px; color: var(--ink); text-decoration: none; }
   .brand:visited { color: var(--ink); }
-  .masthead nav { display: flex; gap: 20px; }
-  .masthead nav a, .masthead nav a:visited { color: var(--ink-62); text-decoration: none; }
-  .masthead nav a:hover { color: var(--ink); }
+  .brand .mark { font-size: 20px; line-height: 1; }
+  .masthead nav a { color: var(--ink-2); font-size: 15px; }
 
-  /* ---------- Intro ---------- */
-  h1, h2 { font-size: 22.5px; line-height: 1.3; font-weight: 600; letter-spacing: -.01em; margin: 0 0 14px; text-wrap: balance; }
-  h3 { font-size: 15px; font-weight: 700; margin: 0 0 4px; }
-  p { margin: 0 0 18px; }
-  .intro p { max-width: 62ch; }
-
-  .addr { display: flex; border: 1px solid var(--rule); background: transparent; }
-  .addr:focus-within { border-color: var(--ink-45); }
+  /* ---------- Intro + URL form ---------- */
+  .intro { padding-block: 32px 8px; max-width: 760px; }
+  .intro .lede { color: var(--ink-2); font-size: 17px; max-width: 60ch; margin-bottom: 28px; }
+  .field-label { display: block; font-weight: 600; font-size: 15px; margin-bottom: 8px; }
+  .addr { display: flex; gap: 8px; }
   .addr input {
-    flex: 1; min-width: 0; border: 0; background: transparent; outline: none;
-    font-size: 15px; padding: 14px 16px;
+    flex: 1; min-width: 0; min-height: 50px; padding: 12px 14px;
+    background: var(--surface); border: 1px solid var(--control); border-radius: 0;
+    font-size: 16px; outline: none;
   }
-  .addr input::placeholder { color: var(--ink-40); }
-  .go {
-    flex: none; border: 0; border-left: 1px solid var(--rule); background: transparent; cursor: pointer;
-    padding: 0 20px; font-size: 11px; letter-spacing: .09em; text-transform: uppercase; color: var(--ink);
-    transition: background-color .15s, color .15s;
-  }
-  .go:hover { background: var(--ink); color: var(--paper); }
-  .go[disabled] { cursor: progress; background: var(--tint); color: var(--ink-55); }
-  .progress:empty { display: none; }
+  .addr input:focus { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+  .addr input::placeholder { color: var(--ink-3); }
+  .hint { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; margin: 10px 0 0; color: var(--ink-2); font-size: 15px; }
+  .status-line { margin: 12px 0 0; font-size: 15px; color: var(--ink-2); }
+  .status-line:empty { display: none; }
 
   .paste { margin-top: 16px; }
   .paste textarea {
-    display: block; width: 100%; min-height: 150px; resize: vertical;
-    background: transparent; border: 1px solid var(--rule); border-radius: 0;
-    padding: 12px 16px; font: 13px/1.55 ui-monospace, Menlo, Consolas, monospace; color: var(--ink);
+    display: block; width: 100%; min-height: 160px; resize: vertical;
+    background: var(--surface); border: 1px solid var(--control); border-radius: 0;
+    padding: 12px 14px; font: 13px/1.55 var(--mono);
   }
-  .paste textarea:focus { outline: none; border-color: var(--ink-45); }
-  .paste .row-actions { display: flex; flex-wrap: wrap; gap: 8px 20px; align-items: baseline; margin-top: 10px; }
-  .paste .row-actions span { color: var(--ink-55); font-size: 14px; }
+  .paste textarea:focus { outline: none; border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+  .paste .row-actions { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; margin-top: 10px; color: var(--ink-2); font-size: 15px; }
 
-  .alert { margin-top: 16px; padding: 12px 16px; border: 1px solid rgba(162, 59, 42, .35); color: var(--bad); font-size: 14px; }
+  .alert { margin-top: 16px; padding: 12px 14px; border: 1px solid var(--bad); border-left-width: 4px; color: var(--ink); background: var(--surface); font-size: 15px; max-width: 70ch; }
+  .alert strong { color: var(--bad); }
 
   /* ---------- Report ---------- */
-  .report { padding-block: 56px 32px; }
-  .report-head { margin-bottom: 28px; }
-  .report-head h2 { margin-bottom: 4px; overflow-wrap: anywhere; }
-  .report-head .src { font-size: 14px; overflow-wrap: anywhere; }
-  .example-tag { color: var(--terra); }
+  .report { padding-block: 40px 64px; scroll-margin-top: 16px; }
+  .report:focus { outline: none; }
+  .report-head { margin-bottom: 20px; }
+  .report-head .src { margin-top: 4px; font-size: 15px; overflow-wrap: anywhere; }
+  .badge { display: inline-block; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; padding: 2px 7px; border: 1px solid var(--moved); color: var(--moved); margin-left: 8px; vertical-align: 1px; }
 
-  /* Floor plan grids: hairline cells, borders collapse via top/left on the grid */
-  .plan { display: grid; border-top: 1px solid var(--rule); border-left: 1px solid var(--rule); }
-  .plan > * { border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+  .stats { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); border: 1px solid var(--hairline); background: var(--surface); margin: 0 0 28px; padding: 0; }
+  .stat { padding: 14px 16px; border-left: 1px solid var(--hairline); display: flex; flex-direction: column-reverse; gap: 2px; margin: 0; }
+  .stat:first-child { border-left: 0; }
+  .stat dt { font-size: 13px; color: var(--ink-2); }
+  .stat dd { margin: 0; font-size: 26px; line-height: 1.15; font-weight: 600; font-variant-numeric: tabular-nums; }
 
-  .stats { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-bottom: 40px; }
-  .stat { padding: 14px 15px 16px; display: flex; flex-direction: column; gap: 18px; }
-  .stat .lbl { color: var(--ink-55); }
-  .stat b { font-size: 22.5px; line-height: 1; font-weight: 600; letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
+  .layout { display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 28px; align-items: start; }
 
-  .rooms { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  .room {
-    display: flex; flex-direction: column; justify-content: space-between; gap: 22px; min-height: 90px;
-    background: transparent; border-top: 0; border-left: 0; padding: 14px 15px 13px; text-align: left; cursor: pointer;
-    transition: background-color .15s;
+  .filters { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); }
+  .filters h3 { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); font-weight: 400; margin: 20px 0 6px; }
+  .filters h3:first-child { margin-top: 0; }
+  .filter-list { display: grid; gap: 2px; margin: 0; padding: 0; list-style: none; }
+  .filter {
+    display: flex; align-items: center; gap: 10px; width: 100%; min-height: 40px;
+    padding: 8px 10px; background: transparent; border: 1px solid transparent; cursor: pointer;
+    text-align: left; font-size: 15px; color: var(--ink);
   }
-  .room.wide { grid-column: span 2; }
-  .room:hover { background: var(--tint); }
-  .room[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
-  .room[aria-pressed="true"] .plus, .room[aria-pressed="true"] .n { color: rgba(245, 241, 233, .6); }
-  .room[disabled] { cursor: default; background: transparent; }
-  .room[disabled] .lbl, .room[disabled] .n { color: var(--ink-40); }
-  .room .n { font-size: 15px; color: var(--ink-62); font-variant-numeric: tabular-nums; }
-  .room.warn .lbl { color: var(--terra); }
-  .room.bad .lbl { color: var(--bad); }
-  .room[aria-pressed="true"].warn .lbl, .room[aria-pressed="true"].bad .lbl { color: var(--paper); }
+  .filter:hover { background: var(--tint); }
+  .filter[aria-pressed="true"] { background: var(--ink); color: var(--on-ink); }
+  .filter[aria-pressed="true"] .n { color: var(--on-ink); }
+  .filter[disabled] { color: var(--ink-3); cursor: default; background: transparent; }
+  .filter .n { margin-left: auto; font-size: 14px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+  .filter .mark { width: 14px; flex: none; text-align: center; }
+  .filter.bad .mark { color: var(--bad); }
+  .filter.moved .mark { color: var(--moved); }
+  .filter[aria-pressed="true"] .mark { color: var(--on-ink); }
 
-  .list { margin-top: 40px; }
-  .search { display: block; width: 100%; border: 0; border-bottom: 1px solid var(--rule); background: transparent; padding: 10px 0; font-size: 15px; outline: none; }
-  .search::placeholder { color: var(--ink-40); }
-  .search:focus { border-bottom-color: var(--ink-45); }
-  .toolbar-2 { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 18px; padding: 12px 0 0; color: var(--ink-55); }
-  .toolbar-2 .left { flex: 1 1 auto; display: flex; flex-wrap: wrap; gap: 8px 18px; }
-  .toolbar-2 .right { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: baseline; }
-  .toolbar-2 .sep { color: var(--ink-40); }
-  .select select {
-    appearance: none; -webkit-appearance: none; field-sizing: content; border: 0; background: transparent; cursor: pointer; padding: 0 14px 0 0;
-    font-size: 11px; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-62);
-    background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%);
-    background-position: right 4px center, right 0 center; background-size: 4px 4px; background-repeat: no-repeat;
+  .panel { border: 1px solid var(--hairline); background: var(--surface); min-width: 0; }
+  .toolbar { display: grid; gap: 12px; padding: 14px 16px; border-bottom: 1px solid var(--hairline); }
+  .toolbar .row-1 { display: flex; flex-wrap: wrap; gap: 10px 12px; align-items: end; }
+  .ctl { display: grid; gap: 4px; }
+  .ctl label { font-size: 13px; color: var(--ink-2); }
+  .ctl.grow { flex: 1 1 240px; }
+  .ctl input, .ctl select {
+    min-height: 40px; padding: 8px 10px; background: var(--paper); border: 1px solid var(--control); border-radius: 0; font-size: 15px;
   }
-  .select select:hover { color: var(--ink); }
+  .ctl select { appearance: none; -webkit-appearance: none; padding-right: 30px; cursor: pointer;
+    background-image: linear-gradient(45deg, transparent 50%, var(--ink-2) 50%), linear-gradient(135deg, var(--ink-2) 50%, transparent 50%);
+    background-position: right 14px center, right 9px center; background-size: 5px 5px; background-repeat: no-repeat; }
+  .ctl input:focus, .ctl select:focus { outline: none; border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+  .toolbar .row-2 { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .toolbar .row-2 .showing { margin-right: auto; font-size: 14px; color: var(--ink-2); }
+  .progress { display: grid; gap: 6px; font-size: 14px; color: var(--ink-2); }
+  .bar { height: 3px; background: var(--hairline); }
+  .bar > span { display: block; height: 100%; width: 0; background: var(--ink); transition: width .2s; }
 
-  .group { margin-top: 36px; }
-  .group-head { display: flex; align-items: baseline; gap: 6px; color: var(--ink-55); padding-bottom: 8px; border-bottom: 1px solid var(--rule); }
-  .group-head .name { color: var(--ink); }
-  .group-head .name.domain { text-transform: none; letter-spacing: .02em; font-size: 12px; }
-  .group-head .n { margin-left: auto; font-variant-numeric: tabular-nums; }
+  .group-head { display: flex; align-items: baseline; gap: 8px; padding: 18px 16px 8px; border-top: 1px solid var(--hairline); }
+  .group:first-child .group-head { border-top: 0; }
+  .group-head h3 { margin: 0; font-size: 16px; font-weight: 600; overflow-wrap: anywhere; }
+  .group-head .n { font-size: 14px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+  .group-head .note { font-size: 14px; color: var(--ink-2); }
 
-  ul.rows { list-style: none; margin: 0; padding: 0; }
-  .group > ul.rows:first-child { border-top: 1px solid var(--rule); }
-  .row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 20px; padding: 14px 0 15px; border-bottom: 1px solid var(--rule-soft); }
-  .anchor { overflow-wrap: anywhere; }
-  .anchor .kind { color: var(--ink-45); font-size: 11px; letter-spacing: .09em; text-transform: uppercase; margin-left: 8px; }
-  .anchor.none { color: var(--ink-45); font-style: italic; }
-  .url { display: inline; font-size: 14px; overflow-wrap: anywhere; }
-  .final { font-size: 14px; color: var(--terra); overflow-wrap: anywhere; }
-  .meta { color: var(--ink-55); margin-top: 6px; }
-  .meta .rel { color: var(--terra); }
-  .side { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; padding-top: 3px; }
-  .st { color: var(--ink-55); white-space: nowrap; font-variant-numeric: tabular-nums; }
-  .st.moved { color: var(--terra); }
+  ul.rows { list-style: none; margin: 0; padding: 0 0 6px; }
+  .row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 18px; padding: 12px 16px; border-top: 1px solid var(--hairline); }
+  .row:hover { background: var(--tint); }
+  .anchor { font-size: 16px; overflow-wrap: anywhere; }
+  .anchor .kind { color: var(--ink-2); font-size: 13px; margin-left: 6px; }
+  .anchor.none { color: var(--ink-2); font-style: italic; }
+  .url { font-size: 14px; overflow-wrap: anywhere; }
+  .final { font-size: 14px; color: var(--moved); overflow-wrap: anywhere; }
+  .meta { margin: 4px 0 0; font-size: 13px; color: var(--ink-3); }
+  .meta .rel { color: var(--moved); }
+  .side { display: flex; align-items: center; gap: 12px; }
+  .st { font-size: 14px; white-space: nowrap; font-variant-numeric: tabular-nums; color: var(--ok); }
+  .st.moved { color: var(--moved); }
   .st.bad { color: var(--bad); }
-  .st.pending { color: var(--ink-40); animation: pulse 1.2s ease-in-out infinite; }
-  @keyframes pulse { 50% { opacity: .35; } }
-  .copy { background: none; border: 0; padding: 0; cursor: pointer; color: var(--ink-45); }
-  .copy:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+  .st.pending { color: var(--ink-3); }
+  .copy { min-height: 32px; padding: 4px 10px; font-size: 13px; }
 
-  .empty { padding: 40px 0; color: var(--ink-55); }
+  .empty { padding: 40px 16px; color: var(--ink-2); }
 
   .toast {
     position: fixed; left: 50%; bottom: calc(env(safe-area-inset-bottom, 0px) + 24px); transform: translate(-50%, 8px);
-    background: var(--ink); color: var(--paper); padding: 9px 14px;
-    font-size: 11px; letter-spacing: .09em; text-transform: uppercase;
-    opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; z-index: 10; white-space: nowrap;
+    background: var(--ink); color: var(--on-ink); padding: 10px 16px; font-size: 14px;
+    opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; z-index: 10;
   }
   .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
-  footer.site { padding-block: 32px 48px; }
-  footer.site p { color: var(--ink-62); font-size: 14px; max-width: 62ch; }
-  footer.site code { font-size: 13px; }
-  .foot-row { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 16px; margin-top: 40px; color: var(--ink-55); font-size: 10px; letter-spacing: .1em; }
-  .foot-row a, .foot-row a:visited { color: var(--ink-55); text-decoration: none; }
-  .foot-row a:hover { color: var(--ink); }
-  .foot-row .dia { margin: 0 8px; color: var(--ink-40); }
+  footer.site { border-top: 1px solid var(--hairline); padding-block: 28px 40px; }
+  footer.site .cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+  footer.site h2 { font-size: 15px; margin-bottom: 6px; }
+  footer.site p { color: var(--ink-2); font-size: 15px; max-width: 44ch; margin: 0; }
+  footer.site code { font: 13px var(--mono); }
 
+  @media (max-width: 960px) {
+    .stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .stat:nth-child(4) { border-left: 0; }
+    .stat:nth-child(n+4) { border-top: 1px solid var(--hairline); }
+    .layout { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+    .filters { position: static; }
+    .filters h3 { display: none; }
+    .filters .groups { display: flex; flex-wrap: wrap; gap: 6px; }
+    .filter-list { display: contents; }
+    .filter { width: auto; border-color: var(--control); gap: 8px; }
+    .filter .n { margin-left: 0; }
+    .filter[disabled] { display: none; }
+    .toolbar .row-2 .showing { flex-basis: 100%; }
+  }
   @media (max-width: 640px) {
-    .masthead { padding-block: 28px 40px; }
-    .masthead nav a.hide-sm { display: none; }
+    .masthead nav { display: none; }
+    .intro { padding-top: 12px; }
+    .addr { flex-direction: column; }
     .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .rooms { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .room { min-height: 76px; }
+    .stat:nth-child(odd) { border-left: 0; }
+    .stat:nth-child(4) { border-left: 1px solid var(--hairline); }
+    .stat:nth-child(n+3) { border-top: 1px solid var(--hairline); }
     .row { grid-template-columns: minmax(0, 1fr); }
-    .side { flex-direction: row; justify-content: space-between; align-items: baseline; padding-top: 4px; }
+    .side { justify-content: space-between; }
+    .copy { min-height: 40px; }
+    .filter { min-height: 44px; }
+    footer.site .cols { grid-template-columns: minmax(0, 1fr); }
   }
   @media (prefers-reduced-motion: reduce) {
     *, *::before { animation: none !important; transition: none !important; }
   }
 </style>
 </head>
-<body id="top">
+<body>
+  <a class="skip" href="#report">Skip to results</a>
   <div class="wrap">
     <header class="masthead">
-      <a class="brand" href="./">～のリンク ✴︎ Anchorage</a>
-      <nav aria-label="Site">
-        <a href="#how" class="hide-sm">How it works</a>
-        <a href="https://deeeen.xyz">Deeeen.xyz</a>
-      </nav>
+      <a class="brand" href="./"><span class="mark" aria-hidden="true">✴︎</span>Anchorage</a>
+      <nav aria-label="Site"><a href="#how">How it works</a></nav>
     </header>
 
-    <section class="intro">
-      <h1>Every link on the page, sorted.</h1>
-      <p>Paste any URL — an article, a homepage, a docs page — and get every hyperlink on it: the anchor text, where it really goes, and which part of the page it sits in. Grouped, deduplicated, ready to export.</p>
+    <section class="intro" aria-labelledby="intro-title">
+      <h1 id="intro-title">Every link on the page, sorted.</h1>
+      <p class="lede">Paste any URL — an article, a homepage, a docs page — and get every hyperlink on it: the anchor text, where it really goes, and which part of the page it sits in. Grouped, deduplicated, ready to export.</p>
 
-      <div class="label-row">
-        <span>Paste a URL</span>
-        <button class="textlink" id="pasteToggle" type="button" aria-expanded="false" aria-controls="pastePanel">Paste the source instead</button>
-      </div>
-      <form class="addr" id="form" novalidate>
-        <input id="urlInput" type="url" inputmode="url" autocomplete="url" spellcheck="false" placeholder="https://example.com/blog/your-post" aria-label="Page URL">
-        <button class="go" id="goBtn" type="submit">Extract →</button>
+      <form id="form" novalidate>
+        <label class="field-label" for="urlInput">Page URL</label>
+        <div class="addr">
+          <input id="urlInput" type="url" inputmode="url" autocomplete="url" spellcheck="false" placeholder="https://example.com/blog/your-post" aria-describedby="urlHint">
+          <button class="btn btn-primary" id="goBtn" type="submit">Extract links</button>
+        </div>
       </form>
-      <p class="caption progress" id="progress" aria-live="polite"></p>
+      <p class="hint" id="urlHint">
+        <span>Some sites block automated visits.</span>
+        <button class="linkbtn" id="pasteToggle" type="button" aria-expanded="false" aria-controls="pastePanel">Paste the page source instead</button>
+      </p>
+      <p class="status-line" id="progress" role="status"></p>
 
       <div class="paste" id="pastePanel" hidden>
-        <textarea id="pasteInput" placeholder="Open the page, press Ctrl/⌘ + U to view its source, select all, and paste it here." aria-label="Page HTML source"></textarea>
+        <label class="field-label" for="pasteInput">Page source (HTML)</label>
+        <textarea id="pasteInput" placeholder="Open the page, press Ctrl/⌘ + U to view its source, select all, and paste it here."></textarea>
         <div class="row-actions">
-          <button class="textlink" id="pasteBtn" type="button">Extract from source →</button>
-          <span>Links resolve against the URL above.</span>
+          <button class="btn" id="pasteBtn" type="button">Extract from source</button>
+          <span>Relative links resolve against the Page URL above.</span>
         </div>
       </div>
 
@@ -247,71 +283,80 @@
     </section>
   </div>
 
-  <main class="wrap report" id="report">
+  <main class="wrap report" id="report" tabindex="-1" aria-labelledby="pageTitle">
     <div class="report-head">
-      <p class="label-row"><span><span id="eyebrow">Report</span> <span class="example-tag" id="exampleTag">✴︎ Example</span></span></p>
-      <h2 id="pageTitle"></h2>
+      <p class="eyebrow" id="eyebrow">Results</p>
+      <h2><span id="pageTitle"></span><span class="badge" id="exampleTag">Example</span></h2>
       <div class="src" id="pageSrc"></div>
     </div>
 
-    <div class="plan stats" id="stats"></div>
+    <dl class="stats" id="stats"></dl>
 
-    <div class="label-row">
-      <span>Floor plan</span>
-      <button class="textlink" type="button" data-filter="all" id="showAll">Show all</button>
+    <div class="layout">
+      <nav class="filters" id="rail" aria-label="Filter links"></nav>
+
+      <section class="panel" aria-label="Links">
+        <div class="toolbar">
+          <div class="row-1">
+            <div class="ctl grow">
+              <label for="q">Search</label>
+              <input id="q" type="search" placeholder="Anchor text or URL">
+            </div>
+            <div class="ctl">
+              <label for="groupBy">Group by</label>
+              <select id="groupBy">
+                <option value="category">Type</option>
+                <option value="domain">Domain</option>
+                <option value="location">Page section</option>
+                <option value="none">No grouping</option>
+              </select>
+            </div>
+            <div class="ctl">
+              <label for="sortBy">Sort</label>
+              <select id="sortBy">
+                <option value="page">Page order</option>
+                <option value="text">Anchor A–Z</option>
+                <option value="url">URL A–Z</option>
+                <option value="count">Most repeated</option>
+              </select>
+            </div>
+          </div>
+          <div class="row-2">
+            <span class="showing" id="showing" aria-live="polite"></span>
+            <button class="btn" id="checkBtn" type="button"><span>Check where links go</span></button>
+            <button class="btn" id="copyBtn" type="button">Copy URLs</button>
+            <button class="btn" id="csvBtn" type="button">Download CSV</button>
+            <button class="btn" id="jsonBtn" type="button">Download JSON</button>
+          </div>
+          <div class="progress" id="checkProgress" hidden>
+            <span id="checkText"></span>
+            <div class="bar" role="progressbar" id="checkBar" aria-label="Link check progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div>
+          </div>
+        </div>
+        <div id="groups"></div>
+      </section>
     </div>
-    <div id="rail" aria-label="Filter links"></div>
-
-    <section class="list">
-      <input class="search" id="q" type="search" placeholder="Filter by anchor text or URL" aria-label="Filter links">
-      <div class="toolbar-2">
-        <div class="left">
-          <span class="select">
-            <select id="groupBy" aria-label="Group by">
-              <option value="category">Group by room</option>
-              <option value="domain">Group by domain</option>
-              <option value="location">Group by page section</option>
-              <option value="none">No grouping</option>
-            </select>
-          </span>
-          <span class="select">
-            <select id="sortBy" aria-label="Sort by">
-              <option value="page">Page order</option>
-              <option value="text">Anchor A–Z</option>
-              <option value="url">URL A–Z</option>
-              <option value="count">Most repeated</option>
-            </select>
-          </span>
-          <span id="showing"></span>
-        </div>
-        <div class="right">
-          <button class="textlink" id="checkBtn" type="button"><span>Check where links go →</span></button>
-          <span class="sep">⦿</span>
-          <button class="textlink" id="copyBtn" type="button">Copy URLs</button>
-          <button class="textlink" id="csvBtn" type="button">CSV</button>
-          <button class="textlink" id="jsonBtn" type="button">JSON</button>
-        </div>
-      </div>
-      <div id="groups"></div>
-    </section>
   </main>
 
-  <footer class="wrap site">
-    <div id="how">
-      <h3>✴︎ How it works</h3>
-      <p>We download the page, read every <code>&lt;a href&gt;</code>, resolve relative links, and sort them into rooms. “Check where links go” follows each link’s redirects and reports the final address and status.</p>
-    </div>
-    <div id="privacy">
-      <h3>✴︎ Privacy</h3>
-      <p>No accounts and no tracking. The URL you enter is fetched by our server and not stored; the extracted results stay in your browser.</p>
-    </div>
-    <div class="foot-row">
-      <span>Made from iterations. ✴︎</span>
-      <span><a href="#top" id="toTop">↑ Top</a><span class="dia">◊</span><a href="https://github.com/gundaIf/link-checker">GitHub</a><span class="dia">◊</span><a href="https://deeeen.xyz">Deeeen.xyz</a></span>
+  <footer class="site">
+    <div class="wrap cols">
+      <div id="how">
+        <h2>How it works</h2>
+        <p>We download the page, read every <code>&lt;a href&gt;</code>, resolve relative links, and group them. “Check where links go” follows each link’s redirects and reports the final address and status.</p>
+      </div>
+      <div>
+        <h2>Privacy</h2>
+        <p>No accounts and no tracking. The URL you enter is fetched by our server and not stored; the extracted results stay in your browser.</p>
+      </div>
+      <div>
+        <h2>Types</h2>
+        <p>Internal links stay on the same site (www. is ignored). Social, files and media, email and phone, and same-page anchors are split out so the external list stays clean.</p>
+      </div>
     </div>
   </footer>
 
-  <div class="toast" id="toast" role="status"></div>
+  <div class="toast" id="toast" aria-hidden="true"></div>
+  <div class="sr-only" id="announce" role="status" aria-live="polite"></div>
 
 <script>
 /* Where the fetch API lives. On GitHub Pages it's the Cloudflare Worker (worker/proxy.js);
@@ -531,44 +576,39 @@ function renderStats() {
     [count(['internal']), 'Internal'],
     [count(['external', 'social']), 'External'],
     [domains.size, 'Other domains'],
-    [nofollow, 'Nofollow / sponsored'],
+    [nofollow, 'Nofollow or sponsored'],
   ];
-  $('stats').innerHTML = items.map(([n, label]) => `<div class="stat"><span class="lbl">${label}</span><b>${fmt(n)}</b></div>`).join('');
+  $('stats').innerHTML = items.map(([n, label]) => `<div class="stat"><dt>${label}</dt><dd>${fmt(n)}</dd></div>`).join('');
 }
-
-const WORDS = ['No', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
 
 function renderRail() {
   const r = state.result;
   const n = pred => r.links.filter(pred).length;
-  const room = (id, label, count, cls = '') =>
-    `<button class="room ${cls}" type="button" data-filter="${id}" aria-pressed="${state.filter === id}" ${count ? '' : 'disabled'}>` +
-    `<span class="lbl">${esc(label)}<span class="plus">+</span></span><span class="n">${fmt(count)}</span></button>`;
+  const item = (id, label, count, mark = '', cls = '') =>
+    `<li><button class="filter ${cls}" type="button" data-filter="${id}" aria-pressed="${state.filter === id}" ${count || id === 'all' ? '' : 'disabled'}>` +
+    (mark ? `<span class="mark" aria-hidden="true">${mark}</span>` : '') +
+    `<span>${esc(label)}</span><span class="n">${fmt(count)}</span></button></li>`;
 
-  const counts = CATEGORIES.map(c => n(l => l.category === c.id));
-  let html = CATEGORIES.map((c, i) => room(c.id, c.label, counts[i], c.id === 'internal' ? 'wide' : '')).join('');
-  html += room('nofollow', 'Nofollow / sponsored', n(l => l.nofollow || l.sponsored || l.ugc));
-  let broken = 0;
+  let html = '<h3>Type</h3><ul class="filter-list">' + item('all', 'All links', r.links.length);
+  html += CATEGORIES.map(c => item(c.id, c.label, n(l => l.category === c.id))).join('') + '</ul>';
+  html += '<h3>Attributes</h3><ul class="filter-list">' + item('nofollow', 'Nofollow or sponsored', n(l => l.nofollow || l.sponsored || l.ugc)) + '</ul>';
   if (state.status.size) {
     const s = states => n(l => states.includes(state.status.get(l.url)?.state));
-    broken = s(['broken', 'error']);
-    html += room('status:broken', 'Broken', broken, 'wide bad') + room('status:redirect', 'Redirects', s(['redirect']), 'wide warn');
+    html += '<h3>Destinations</h3><ul class="filter-list">' +
+      item('status:broken', 'Broken', s(['broken', 'error']), '✕', 'bad') +
+      item('status:redirect', 'Redirects', s(['redirect']), '↪', 'moved') + '</ul>';
   }
-  const rooms = counts.filter(Boolean).length;
-  let caption = `${WORDS[rooms] || rooms} room${rooms === 1 ? '' : 's'} ✴︎ ${fmt(r.links.length)} links`;
-  if (state.status.size && !state.checking) caption += broken ? ` ✴︎ ${fmt(broken)} need attention` : ' ✴︎ all reachable';
-  $('rail').innerHTML = `<div class="plan rooms">${html}</div><p class="caption">${caption}</p>`;
-  $('showAll').disabled = state.filter === 'all';
+  $('rail').innerHTML = `<div class="groups">${html}</div>`;
 }
 
 function statusPill(l) {
   const s = state.status.get(l.url);
   if (!s) return '';
   if (s.state === 'pending') return '<span class="st pending">Checking…</span>';
-  if (s.state === 'ok') return `<span class="st">${s.code} OK</span>`;
-  if (s.state === 'redirect') return `<span class="st moved">${s.code >= 300 && s.code < 400 ? s.code : '3xx'} → Moved</span>`;
-  if (s.state === 'broken') return `<span class="st bad">${s.code} Broken</span>`;
-  return '<span class="st bad">No response</span>';
+  if (s.state === 'ok') return `<span class="st"><span aria-hidden="true">✓</span> ${s.code} OK</span>`;
+  if (s.state === 'redirect') return `<span class="st moved"><span aria-hidden="true">↪</span> ${s.code >= 300 && s.code < 400 ? s.code : '3xx'} Redirects</span>`;
+  if (s.state === 'broken') return `<span class="st bad"><span aria-hidden="true">✕</span> ${s.code} Broken</span>`;
+  return '<span class="st bad"><span aria-hidden="true">✕</span> No response</span>';
 }
 
 function prettyUrl(l) {
@@ -581,26 +621,26 @@ function prettyUrl(l) {
 }
 
 function rowHtml(l) {
-  const kindNote = { image: 'Image alt', label: 'Aria-label' }[l.kind];
+  const kindNote = { image: '(image alt text)', label: '(aria-label)' }[l.kind];
   const meta = [
     state.group !== 'category' ? CAT[l.category].label : '',
     state.group !== 'location' ? l.location : '',
-    l.nofollow ? '<span class="rel">Nofollow</span>' : '',
-    l.sponsored ? '<span class="rel">Sponsored</span>' : '',
-    l.ugc ? '<span class="rel">UGC</span>' : '',
-    l.newTab ? 'New tab' : '',
-    l.count > 1 ? `<span title="Appears ${l.count} times with this anchor text">×${l.count}</span>` : '',
-  ].filter(Boolean).join(' ⦿ ');
+    l.nofollow ? '<span class="rel">nofollow</span>' : '',
+    l.sponsored ? '<span class="rel">sponsored</span>' : '',
+    l.ugc ? '<span class="rel">ugc</span>' : '',
+    l.newTab ? 'Opens in new tab' : '',
+    l.count > 1 ? `Appears ${l.count}×` : '',
+  ].filter(Boolean).join(' · ');
   const s = state.status.get(l.url);
-  const finalLine = s && s.state === 'redirect' && s.finalUrl ? `<div class="final">→ ${esc(s.finalUrl)}</div>` : '';
+  const finalLine = s && s.state === 'redirect' && s.finalUrl ? `<div class="final"><span aria-hidden="true">→</span><span class="sr-only">Ends up at</span> ${esc(s.finalUrl)}</div>` : '';
   return `<li class="row">
     <div>
       <div class="anchor${l.kind === 'none' ? ' none' : ''}">${esc(l.text)}${kindNote ? `<span class="kind">${kindNote}</span>` : ''}</div>
-      <a class="url" href="${esc(l.url)}" target="_blank" rel="noopener noreferrer nofollow">${prettyUrl(l)}</a>
+      <a class="url" href="${esc(l.url)}" target="_blank" rel="noopener noreferrer nofollow">${prettyUrl(l)}<span class="sr-only"> (opens in a new tab)</span></a>
       ${finalLine}
-      ${meta ? `<div class="meta">${meta}</div>` : ''}
+      ${meta ? `<p class="meta">${meta}</p>` : ''}
     </div>
-    <div class="side">${statusPill(l)}<button class="copy" type="button" data-copy="${esc(l.url)}" aria-label="Copy URL">Copy</button></div>
+    <div class="side">${statusPill(l)}<button class="btn copy" type="button" data-copy="${esc(l.url)}" aria-label="Copy URL for ${esc(l.text)}">Copy</button></div>
   </li>`;
 }
 
@@ -608,11 +648,11 @@ function renderGroups() {
   const r = state.result;
   const list = visibleLinks();
   $('showing').textContent = list.length === r.links.length
-    ? `${fmt(list.length)} links`
-    : `${fmt(list.length)} of ${fmt(r.links.length)} links`;
+    ? `${fmt(list.length)} distinct links`
+    : `Showing ${fmt(list.length)} of ${fmt(r.links.length)} distinct links`;
 
   if (!list.length) {
-    $('groups').innerHTML = `<p class="empty">${r.links.length ? 'No links match this filter.' : 'This page has no links we could read.'}</p>`;
+    $('groups').innerHTML = `<p class="empty">${r.links.length ? 'No links match this filter. Try another filter or clear the search.' : 'This page has no links we could read.'}</p>`;
     return;
   }
 
@@ -636,12 +676,10 @@ function renderGroups() {
 
   $('groups').innerHTML = keys.map(k => {
     const items = groups.get(k);
-    let name = '';
-    if (state.group === 'category') name = `<span class="name">${CAT[k].label}</span><span class="plus">+</span>`;
-    else if (state.group === 'domain') name = `<span class="name${k.includes('.') ? ' domain' : ''}">${esc(k)}</span>${k === r.host ? '<span>✴︎ This site</span>' : ''}`;
-    else if (state.group === 'location') name = `<span class="name">${esc(k)}</span><span class="plus">+</span>`;
-    const header = state.group === 'none' ? '' : `<div class="group-head">${name}<span class="n">${fmt(items.length)}</span></div>`;
-    return `<div class="group">${header}<ul class="rows">${items.map(rowHtml).join('')}</ul></div>`;
+    const name = state.group === 'category' ? CAT[k].label : k;
+    const note = state.group === 'domain' && k === r.host ? '<span class="note">This site</span>' : '';
+    const header = state.group === 'none' ? '' : `<div class="group-head"><h3>${esc(name)}</h3>${note}<span class="n">${fmt(items.length)}</span></div>`;
+    return `<section class="group">${header}<ul class="rows">${items.map(rowHtml).join('')}</ul></section>`;
   }).join('');
 }
 
@@ -650,7 +688,7 @@ function renderAll() {
   $('pageTitle').textContent = r.title;
   $('pageSrc').innerHTML = `<a href="${esc(r.pageUrl)}" target="_blank" rel="noopener noreferrer">${esc(r.pageUrl)}</a>`;
   $('exampleTag').hidden = !r.example;
-    renderStats();
+  renderStats();
   renderRail();
   renderGroups();
   updateCheckBtn();
@@ -660,7 +698,8 @@ let rafPending = false;
 function scheduleRender() {
   if (rafPending) return;
   rafPending = true;
-  requestAnimationFrame(() => { rafPending = false; renderRail(); renderGroups(); });
+  // A timer rather than requestAnimationFrame, so results keep updating in a background tab.
+  setTimeout(() => { rafPending = false; renderRail(); renderGroups(); }, 60);
 }
 
 /* ---------- Actions ---------- */
@@ -681,7 +720,7 @@ function normalizeInput(value) {
 function setBusy(busy) {
   const btn = $('goBtn');
   btn.disabled = busy;
-  btn.textContent = busy ? 'Reading…' : 'Extract →';
+  btn.textContent = busy ? 'Extracting…' : 'Extract links';
 }
 
 function load(result) {
@@ -693,6 +732,8 @@ function load(result) {
   $('q').value = '';
   renderAll();
   $('report').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+  $('report').focus({ preventScroll: true });
+  announce(`Found ${fmt(result.links.length)} distinct links on ${result.title}.`);
 }
 
 async function runUrl() {
@@ -729,8 +770,18 @@ function runPaste() {
 function updateCheckBtn() {
   const btn = $('checkBtn');
   const label = btn.querySelector('span');
-  if (state.checking) { label.textContent = `Stop checking (${state.checking.done}/${state.checking.total})`; return; }
-  label.textContent = state.status.size ? 'Check again →' : 'Check where links go →';
+  const job = state.checking;
+  $('checkProgress').hidden = !job;
+  if (job) {
+    const pct = job.total ? Math.round(job.done / job.total * 100) : 0;
+    $('checkText').textContent = `Checked ${fmt(job.done)} of ${fmt(job.total)} links`;
+    $('checkBar').setAttribute('aria-valuenow', String(pct));
+    $('checkBar').firstElementChild.style.width = pct + '%';
+    label.textContent = 'Stop checking';
+    btn.disabled = false;
+    return;
+  }
+  label.textContent = state.status.size ? 'Check again' : 'Check where links go';
   btn.disabled = !state.result || !state.result.links.some(l => l.web && l.category !== 'anchor');
 }
 
@@ -778,7 +829,7 @@ async function checkDestinations() {
   state.checking = null;
   updateCheckBtn();
   const broken = [...state.status.values()].filter(s => s.state === 'broken' || s.state === 'error').length;
-  toast(broken ? `Checked ${fmt(job.total)} links — ${fmt(broken)} need attention` : `Checked ${fmt(job.total)} links — all reachable`);
+  toast(broken ? `Checked ${fmt(job.total)} links — ${fmt(broken)} ${broken === 1 ? 'needs' : 'need'} attention` : `Checked ${fmt(job.total)} links — all reachable`);
 }
 
 async function copyText(text, el) {
@@ -828,7 +879,13 @@ function csvField(v) {
 }
 
 let toastTimer;
+function announce(msg) {
+  $('announce').textContent = '';
+  setTimeout(() => { $('announce').textContent = msg; }, 50);
+}
+
 function toast(msg) {
+  announce(msg);
   const t = $('toast');
   t.textContent = msg; t.classList.add('show');
   clearTimeout(toastTimer);
@@ -853,7 +910,6 @@ function onFilterClick(e) {
   renderRail(); renderGroups();
 }
 $('rail').addEventListener('click', onFilterClick);
-$('showAll').addEventListener('click', onFilterClick);
 $('q').addEventListener('input', e => { state.q = e.target.value; renderGroups(); });
 $('groupBy').addEventListener('change', e => { state.group = e.target.value; renderGroups(); });
 $('sortBy').addEventListener('change', e => { state.sort = e.target.value; renderGroups(); });
